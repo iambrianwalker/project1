@@ -44,4 +44,24 @@ class Habit{
       totalCompletions: map['total_completions'],
     );
   }
+
+  Habit copyWith({
+    int? id,
+    String? habitName,
+    String? habitDescription,
+    String? category,
+    String? frequency,
+    String? currentStreak,
+    String? totalCompletions
+  }) {
+    return Habit(
+      id: id ?? this.id,
+      habitName: habitName ?? this.habitName,
+      habitDescription: habitDescription ?? this.habitDescription,
+      category: category ?? this.category,
+      frequency: frequency ?? this.frequency,
+      currentStreak: currentStreak ?? this.currentStreak,
+      totalCompletions: totalCompletions ?? this.totalCompletions,
+    );
+  }
 }
