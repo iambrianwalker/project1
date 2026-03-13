@@ -31,4 +31,17 @@ class Habit{
       'total_completions' : totalCompletions,
     };
   }
+
+  factory Habit.fromMap(Map<String, dynamic> map){
+    return Habit(
+      id: map['id'],
+      imageUrl: map['image_url'],
+      habitName: map['habit_name'],
+      habitDescription: map['habit_description'],
+      category: map['category'],
+      frequency: map['frequency'],
+      currentStreak: map['current_streak'],
+      totalCompletions: map['total_completions'],
+    );
+  }
 }
