@@ -1,5 +1,6 @@
 class Habit{
   final int? id;
+  final String? imageUrl;
   final String habitName;
   final String habitDescription;
   final String category;
@@ -9,6 +10,7 @@ class Habit{
 
   Habit({
     this.id,
+    this.imageUrl,
     required this.habitName,
     required this.habitDescription,
     required this.category,
