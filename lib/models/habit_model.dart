@@ -18,4 +18,17 @@ class Habit{
     required this.currentStreak,
     required this.totalCompletions,
   });
+
+  Map <String, dynamic> toMap(){
+    return {
+      'id' : id,
+      'image_url' : imageUrl,
+      'habit_name' : habitName,
+      'habit_description' : habitDescription,
+      'category' : category,
+      'frequency' : frequency,
+      'current_streak' : currentStreak,
+      'total_completions' : totalCompletions,
+    };
+  }
 }
