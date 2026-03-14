@@ -30,6 +30,12 @@ class _HabitMasteryAppState extends State<HabitMasteryApp> {
         surface: Colors.grey.shade200,
         onSurface: Colors.black,
       ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: Colors.grey.shade200,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.black54,
+        type: BottomNavigationBarType.fixed,
+      ),
       useMaterial3: true,
     );
 
@@ -42,6 +48,12 @@ class _HabitMasteryAppState extends State<HabitMasteryApp> {
         onPrimary: Colors.white,
         surface: Colors.blueGrey.shade800,
         onSurface: Colors.white,
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: Colors.blueGrey.shade800,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.white70,
+        type: BottomNavigationBarType.fixed,
       ),
       useMaterial3: true,
     );
