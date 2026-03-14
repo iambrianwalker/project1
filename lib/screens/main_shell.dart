@@ -1,7 +1,6 @@
 //the main shell of the app with bottom bar navigation
 //to switch between main screens: Dashboard, Habits, Progress, and Settings
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'habits_screen.dart';
@@ -48,19 +47,19 @@ class _MainShellState extends State<MainShell> {
         },//end on tap
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home),
+            icon: Icon(Icons.home),
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.check_mark_circled),
+            icon: Icon(Icons.check_circle),
             label: 'Habits',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.chart_bar_alt_fill),
+            icon: Icon(Icons.insights),
             label: 'Progress',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.settings),
+            icon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ]//end items

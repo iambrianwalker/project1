@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -23,7 +22,7 @@ class SettingsScreen extends StatelessWidget {
           title: const Text('Dark Mode'),
           value: isDark,
           onChanged: (_) => onToggleTheme(),
-          secondary: const Icon(CupertinoIcons.moon_fill),
+          secondary: const Icon(Icons.dark_mode),
         ),
       ],
     );
