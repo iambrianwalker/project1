@@ -4,6 +4,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
+import 'habits_screen.dart';
 
 class MainShell extends StatefulWidget {
   final bool isDark;
