@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'habits_screen.dart';
 import 'progress_screen.dart';
+import 'settings_screen.dart';
 
 class MainShell extends StatefulWidget {
   final bool isDark;
