@@ -69,6 +69,26 @@ class HabitsSearchBar extends StatelessWidget {
 }
 
 //##TODO widget to add a habit
+class AddHabitButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const AddHabitButton({
+    super.key,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+          onPressed: onPressed,
+          icon: const Icon(Icons.add),
+          label: const Text('Add Habit'),
+      ),
+    );
+  }
+}
 
 //##TODO widget to display a habit card
 
