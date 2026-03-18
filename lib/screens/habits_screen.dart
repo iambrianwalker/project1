@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class HabitsScreen extends StatefulWidget{
   const HabitsScreen({super.key});
@@ -8,6 +8,17 @@ class HabitsScreen extends StatefulWidget{
 }
 
 class _HabitsScreenState extends State<HabitsScreen>{
+  //text edit controller for search bar
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+      _searchController.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return const Center(
@@ -15,6 +26,27 @@ class _HabitsScreenState extends State<HabitsScreen>{
     );
   }
 }
+
+//widget for page title
+class HabitsTitle extends StatelessWidget {
+  const HabitsTitle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Habits',
+      style: Theme.of(context).textTheme.headlineMedium,
+    );
+  }
+}
+
+//##TODO search bar widget for habits screen
+
+//##TODO widget to add a habit
+
+//##TODO widget to display a habit card
+
+//##TODO widget to display a list of habit cards
 
 //placeholder habits data
 final habits = [
