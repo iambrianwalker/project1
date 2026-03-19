@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'habit_details_screen.dart';
+import 'edit_habit_screen.dart';
 
 class HabitsScreen extends StatefulWidget {
   const HabitsScreen({super.key});
@@ -53,10 +54,11 @@ class _HabitsScreenState extends State<HabitsScreen> {
                 const SizedBox(width: 16),
                 AddHabitButton(
                   onPressed: () {
-                    //##TODO navigate to add habit screen
-                    //temp demonstrate button pressed
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Add Habit button pressed')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const EditHabitScreen(),
+                      ),
                     );
                   },
                 ),
@@ -337,8 +339,11 @@ class HabitList extends StatelessWidget {
             );
           },
           onEdit: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Edit ${habit['habit_name']}')),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditHabitScreen(habit: habit),
+              ),
             );
           },
           onDelete: () {
