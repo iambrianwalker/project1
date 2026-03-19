@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper.init();
@@ -43,5 +44,16 @@ class DatabaseHelper {
       )
       '''
     );
+  }
+
+  //testing method below here
+  Future<void> printDatabaseContents() async {
+    final db = await database;
+
+    print('=== HABITS ===');
+    final habits = await db.query('habits');
+    for (final habit in habits) {
+      print(habits);
+    }
   }
 }
