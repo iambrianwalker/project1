@@ -38,7 +38,7 @@ class DatabaseHelper {
         habit_name TEXT NOT NULL,
         habit_description TEXT NOT NULL,
         category TEXT NOT NULL,
-        frequncy TEXT NOT NULL,
+        frequency TEXT NOT NULL,
         current_streak INTEGER NOT NULL,
         total_completions INTEGER NOT NULL
       )
