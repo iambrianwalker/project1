@@ -1,8 +1,9 @@
 //widget to display a habit card
 import 'package:flutter/material.dart';
+import '../models/habit_model.dart';
 
 class HabitCard extends StatelessWidget {
-  final Map<String, dynamic> habit;
+  final Habit habit;
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -29,21 +30,21 @@ class HabitCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               HabitCardHeader(
-                habitName: habit['habit_name'].toString(),
-                category: habit['category'].toString(),
+                habitName: habit.habitName,
+                category: habit.category,
               ),
               const SizedBox(height: 8),
               Text(
-                habit['habit_description'].toString(),
+                habit.habitDescription,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 12),
               HabitStatsRow(
-                frequency: habit['frequency'].toString(),
-                currentStreak: habit['current_streak'].toString(),
-                totalCompletions: habit['total_completions'].toString(),
+                frequency: habit.frequency,
+                currentStreak: habit.currentStreak,
+                totalCompletions: habit.totalCompletions,
               ),
               const SizedBox(height: 12),
               HabitCardActions(onEdit: onEdit, onDelete: onDelete),
@@ -102,8 +103,8 @@ class HabitCardHeader extends StatelessWidget {
 //widget for a row of habit stat chips
 class HabitStatsRow extends StatelessWidget {
   final String frequency;
-  final String currentStreak;
-  final String totalCompletions;
+  final int currentStreak;
+  final int totalCompletions;
 
   const HabitStatsRow({
     super.key,
