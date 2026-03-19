@@ -45,5 +45,13 @@ class HabitRepository {
     );
   }
 
-  
+  //Delete - Delete a habit
+  Future<int> deleteHabit(int id) async {
+    final db = await _dbHelper.database;
+    return db.delete(
+      'habits',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
