@@ -301,6 +301,45 @@ class HabitCardActions extends StatelessWidget {
 }
 
 //##TODO widget to display a list of habit cards
+class HabitList extends StatelessWidget {
+  final List<Map<String, dynamic>> habits;
+
+  const HabitList({super.key, required this.habits});
+
+  @override
+  Widget build(BuildContext context) {
+    if (habits.isEmpty) {
+      return const Center(child: Text('No habits found.'));
+    }
+
+    return ListView.separated(
+      itemCount: habits.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final habit = habits[index];
+
+        return HabitCard(
+          habit: habit,
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${habit['habit_name']} tapped')),
+            );
+          },
+          onEdit: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Edit ${habit['habit_name']}')),
+            );
+          },
+          onDelete: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Delete ${habit['habit_name']}')),
+            );
+          },
+        );
+      },
+    );
+  }
+}
 
 //placeholder habits data
 final habits = [
