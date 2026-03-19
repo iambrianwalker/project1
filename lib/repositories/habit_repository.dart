@@ -33,4 +33,17 @@ class HabitRepository {
     if (maps.isEmpty) return null;
     return Habit.fromMap(maps.first);
   }
+
+  //Update - Update existing habit
+  Future<int> updateHabit(Habit habit) async {
+    final db = await _dbHelper.database;
+    return db.update(
+      'habits',
+      habit.toMap(),
+      where: 'id = ?',
+      whereArgs: [habit.id],
+    );
+  }
+
+  
 }
