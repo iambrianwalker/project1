@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'edit_habit_screen.dart';
 
 class HabitDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> habit;
@@ -28,8 +29,11 @@ class HabitDetailsScreen extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Edit button tapped')),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditHabitScreen(habit: habit),
+                  ),
                 );
               },
               icon: const Icon(Icons.edit),
