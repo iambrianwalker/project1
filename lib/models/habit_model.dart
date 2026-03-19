@@ -49,6 +49,7 @@ class Habit{
 
   Habit copyWith({
     int? id,
+    String? imageUrl,
     String? habitName,
     String? habitDescription,
     String? category,
@@ -58,6 +59,7 @@ class Habit{
   }) {
     return Habit(
       id: id ?? this.id,
+      imageUrl: imageUrl ?? this.imageUrl,
       habitName: habitName ?? this.habitName,
       habitDescription: habitDescription ?? this.habitDescription,
       category: category ?? this.category,
