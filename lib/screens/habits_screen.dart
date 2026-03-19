@@ -134,9 +134,7 @@ class HabitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
@@ -162,11 +160,8 @@ class HabitCard extends StatelessWidget {
                 currentStreak: habit['current_streak'].toString(),
                 totalCompletions: habit['total_completions'].toString(),
               ),
-              const SixedBox(height: 12),
-              HabitCardActions(
-                onEdit: onEdit,
-                onDelete: onDelete,
-              ),
+              const SizedBox(height: 12),
+              HabitCardActions(onEdit: onEdit, onDelete: onDelete),
             ],
           ),
         ),
@@ -176,6 +171,48 @@ class HabitCard extends StatelessWidget {
 }
 
 //widget for habit card header
+class HabitCardHeader extends StatelessWidget {
+  final String habitName;
+  final String category;
+
+  const HabitCardHeader({
+    super.key,
+    required this.habitName,
+    required this.category,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            habitName,
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            category,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 //widget for habit stats
 
