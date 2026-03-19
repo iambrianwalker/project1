@@ -214,9 +214,91 @@ class HabitCardHeader extends StatelessWidget {
   }
 }
 
-//widget for habit stats
+//widget for a row of habit stat chips
+class HabitStatsRow extends StatelessWidget {
+  final String frequency;
+  final String currentStreak;
+  final String totalCompletions;
+
+  const HabitStatsRow({
+    super.key,
+    required this.frequency,
+    required this.currentStreak,
+    required this.totalCompletions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        HabitStatChip(icon: Icons.repeat, label: frequency),
+        HabitStatChip(
+          icon: Icons.local_fire_department,
+          label: 'Streak: $currentStreak',
+        ),
+        HabitStatChip(
+          icon: Icons.check_circle,
+          label: 'Done: $totalCompletions',
+        ),
+      ],
+    );
+  }
+}
+
+//widget for an individual stat chip
+class HabitStatChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const HabitStatChip({super.key, required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [Icon(icon, size: 16), const SizedBox(width: 6), Text(label)],
+      ),
+    );
+  }
+}
 
 //widget for habit card actions
+class HabitCardActions extends StatelessWidget {
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const HabitCardActions({
+    super.key,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        TextButton.icon(
+          onPressed: onEdit,
+          icon: const Icon(Icons.edit, size: 18),
+          label: const Text('Edit'),
+        ),
+        TextButton.icon(
+          onPressed: onDelete,
+          icon: const Icon(Icons.delete, size: 18),
+          label: const Text('Delete'),
+        ),
+      ],
+    );
+  }
+}
 
 //##TODO widget to display a list of habit cards
 
