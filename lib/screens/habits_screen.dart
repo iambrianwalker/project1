@@ -115,7 +115,71 @@ class AddHabitButton extends StatelessWidget {
   }
 }
 
-//##TODO widget to display a habit card
+//widget to display a habit card
+class HabitCard extends StatelessWidget {
+  final Map<String, dynamic> habit;
+  final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const HabitCard({
+    super.key,
+    required this.habit,
+    required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              HabitCardHeader(
+                habitName: habit['habit_name'].toString(),
+                category: habit['category'].toString(),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                habit['habit_description'].toString(),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              HabitStatsRow(
+                frequency: habit['frequency'].toString(),
+                currentStreak: habit['current_streak'].toString(),
+                totalCompletions: habit['total_completions'].toString(),
+              ),
+              const SixedBox(height: 12),
+              HabitCardActions(
+                onEdit: onEdit,
+                onDelete: onDelete,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+//widget for habit card header
+
+//widget for habit stats
+
+//widget for habit card actions
 
 //##TODO widget to display a list of habit cards
 
