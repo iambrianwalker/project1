@@ -5,8 +5,8 @@ class Habit{
   final String habitDescription;
   final String category;
   final String frequency;
-  final String currentStreak;
-  final String totalCompletions;
+  final int currentStreak;
+  final int totalCompletions;
   bool isActive;
 
   Habit({
@@ -53,8 +53,8 @@ class Habit{
     String? habitDescription,
     String? category,
     String? frequency,
-    String? currentStreak,
-    String? totalCompletions
+    int? currentStreak,
+    int? totalCompletions
   }) {
     return Habit(
       id: id ?? this.id,
