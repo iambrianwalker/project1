@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'habit_details_screen.dart';
 
 class HabitsScreen extends StatefulWidget {
   const HabitsScreen({super.key});
@@ -328,8 +329,11 @@ class HabitList extends StatelessWidget {
         return HabitCard(
           habit: habit,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${habit['habit_name']} tapped')),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HabitDetailsScreen(habit: habit),
+              ),
             );
           },
           onEdit: () {
