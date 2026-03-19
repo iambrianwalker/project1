@@ -1,11 +1,21 @@
 //widget to display a list of habit cards
 import 'package:flutter/material.dart';
+import '../models/habit_model.dart';
 import 'habit_card.dart';
 
 class HabitList extends StatelessWidget {
-  final List<Map<String, dynamic>> habits;
+  final List<Habit> habits;
+  final void Function(Habit habit) onTap;
+  final void Function(Habit habit) onEdit;
+  final void Function(Habit habit) onDelete;
 
-  const HabitList({super.key, required this.habits});
+  const HabitList({
+    super.key,
+    required this.habits,
+    required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,27 +31,9 @@ class HabitList extends StatelessWidget {
 
         return HabitCard(
           habit: habit,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HabitDetailsScreen(habit: habit),
-              ),
-            );
-          },
-          onEdit: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditHabitScreen(habit: habit),
-              ),
-            );
-          },
-          onDelete: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Delete ${habit['habit_name']}')),
-            );
-          },
+          onTap: () => onTap(habit),
+          onEdit: () => onEdit(habit),
+          onDelete: () => onDelete(habit),
         );
       },
     );
