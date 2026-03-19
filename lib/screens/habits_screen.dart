@@ -20,6 +20,15 @@ class _HabitsScreenState extends State<HabitsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //filter habits based on search query
+    final filteredHabits = habits.where((habit) {
+      final habitName = habit['habit_name'].toString().toLowerCase();
+      final category = habit['category'].toString().toLowerCase();
+      final query = _searchQuery.toLowerCase();
+
+      return habitName.contains(query) || category.contains(query);
+    }).toList();
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -53,9 +62,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            //##TODO display list of habit cards based on search query
-            //temp display search query
-            Text('Search query: $_searchQuery'),
+            Expanded(child: HabitList(habits: filteredHabits)),
           ],
         ),
       ),
@@ -73,7 +80,7 @@ class HabitsTitle extends StatelessWidget {
   }
 }
 
-//##TODO search bar widget for habits screen
+//search bar widget for habits screen
 class HabitsSearchBar extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
@@ -300,7 +307,7 @@ class HabitCardActions extends StatelessWidget {
   }
 }
 
-//##TODO widget to display a list of habit cards
+//widget to display a list of habit cards
 class HabitList extends StatelessWidget {
   final List<Map<String, dynamic>> habits;
 
