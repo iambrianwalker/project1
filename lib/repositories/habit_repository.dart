@@ -34,6 +34,30 @@ class HabitRepository {
     return Habit.fromMap(maps.first);
   }
 
+  //Read - Search for Habits
+  Future<List<Habit>> searchHabits(String query) async {
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'habits',
+      where: 'name LIKE ?',
+      whereArgs: ['%$query%'],
+    );
+
+    return maps.map((e) => Habit.fromMap(e)).toList();
+  }
+
+  //Read - Get active habits
+  Future<List<Habit>> getActiveHabits() async {
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'habits',
+      where: 'isActive = ?',
+      whereArgs: [1],
+    );
+
+    return maps.map((e) => Habit.fromMap(e)).toList();
+  }
+
   //Update - Update existing habit
   Future<int> updateHabit(Habit habit) async {
     final db = await _dbHelper.database;
