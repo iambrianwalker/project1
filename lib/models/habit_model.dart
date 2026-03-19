@@ -7,7 +7,7 @@ class Habit{
   final String frequency;
   final int currentStreak;
   final int totalCompletions;
-  bool isActive;
+  //bool isActive;
 
   Habit({
     this.id,
@@ -18,7 +18,7 @@ class Habit{
     required this.frequency,
     required this.currentStreak,
     required this.totalCompletions,
-    this.isActive = false,
+    //this.isActive = false,
   });
 
   Map <String, dynamic> toMap(){
