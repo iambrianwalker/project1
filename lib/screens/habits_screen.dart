@@ -77,6 +77,23 @@ class _HabitsScreenState extends State<HabitsScreen> {
     }).toList();
   }
 
+  //navigation now lives here
+  //this function will send the user to the edit habit screen
+  //then when they click save it will pop them back to habits screen
+  //and finally it will refresh the habits screen
+  Future<void> _navigateToAddHabit() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => const EditHabitScreen(),
+      ),
+    );
+
+    if (result == true) {
+      await _loadHabits();
+    }
+  }
+
 
 
   @override
