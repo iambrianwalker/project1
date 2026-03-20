@@ -1,10 +1,58 @@
+//using a enum for frequency instead of string for predicatable and powerful logic
+enum HabitFrequency {
+  daily,
+  weekly,
+  monthly,
+}
+
+extension HabitFrequencyExtension on HabitFrequency {
+  //this will convert our enum into a string primarily for storing in the SQLite table
+  String get value {
+    switch (this) {
+      case HabitFrequency.daily:
+        return 'daily';
+      case HabitFrequency.weekly:
+        return 'weekly';
+      case HabitFrequency.monthly:
+        return 'monthly';
+    }
+  }
+
+  //and here we do the opposite. SQLite will give us a string and we will
+  //convert into our enum
+  static HabitFrequency fromString(String value) {
+    switch (value.toLowerCase()) {
+      case 'daily':
+        return HabitFrequency.daily;
+      case 'weekly':
+        return HabitFrequency.weekly;
+      case 'monthly':
+        return HabitFrequency.monthly;
+      default:
+        throw ArgumentError('Invalid habit frequency: $value');
+    }
+  }
+
+  //lastly, this is for displaying our enum as text in the UI
+  String get label {
+    switch (this) {
+      case HabitFrequency.daily:
+        return 'Daily';
+      case HabitFrequency.weekly:
+        return 'Weekly';
+      case HabitFrequency.monthly:
+        return 'Monthly';
+    }
+  }
+}
+
 class Habit{
   final int? id;
   final String? imageUrl;
   final String habitName;
   final String habitDescription;
   final String category;
-  final String frequency;
+  final HabitFrequency frequency;
   final int currentStreak;
   final int totalCompletions;
   //bool isActive;
