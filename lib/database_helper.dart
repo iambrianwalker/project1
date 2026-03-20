@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  static final DatabaseHelper instance = DatabaseHelper.init();
+  static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
 
   DatabaseHelper._init();
@@ -38,7 +38,7 @@ class DatabaseHelper {
         habit_name TEXT NOT NULL,
         habit_description TEXT NOT NULL,
         category TEXT NOT NULL,
-        frequncy TEXT NOT NULL,
+        frequency TEXT NOT NULL,
         current_streak INTEGER NOT NULL,
         total_completions INTEGER NOT NULL
       )

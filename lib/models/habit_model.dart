@@ -5,9 +5,9 @@ class Habit{
   final String habitDescription;
   final String category;
   final String frequency;
-  final String currentStreak;
-  final String totalCompletions;
-  bool isActive;
+  final int currentStreak;
+  final int totalCompletions;
+  //bool isActive;
 
   Habit({
     this.id,
@@ -18,7 +18,7 @@ class Habit{
     required this.frequency,
     required this.currentStreak,
     required this.totalCompletions,
-    this.isActive = false,
+    //this.isActive = false,
   });
 
   Map <String, dynamic> toMap(){
@@ -49,15 +49,17 @@ class Habit{
 
   Habit copyWith({
     int? id,
+    String? imageUrl,
     String? habitName,
     String? habitDescription,
     String? category,
     String? frequency,
-    String? currentStreak,
-    String? totalCompletions
+    int? currentStreak,
+    int? totalCompletions
   }) {
     return Habit(
       id: id ?? this.id,
+      imageUrl: imageUrl ?? this.imageUrl,
       habitName: habitName ?? this.habitName,
       habitDescription: habitDescription ?? this.habitDescription,
       category: category ?? this.category,

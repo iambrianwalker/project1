@@ -25,7 +25,7 @@ class HabitRepository {
   Future<Habit?> getHabitByID(int id) async {
     final db = await _dbHelper.database;
     final List<Map<String,dynamic>> maps = await db.query(
-      'cards',
+      'habits',
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -39,7 +39,7 @@ class HabitRepository {
     final db = await _dbHelper.database;
     final maps = await db.query(
       'habits',
-      where: 'name LIKE ?',
+      where: 'habit_name LIKE ?',
       whereArgs: ['%$query%'],
     );
 
