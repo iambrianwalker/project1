@@ -4,7 +4,6 @@ import '../repositories/habit_repository.dart';
 import 'habit_details_screen.dart';
 import 'edit_habit_screen.dart';
 import '../widgets/habit_list.dart';
-import '../widgets/habit_card.dart';
 
 class HabitsScreen extends StatefulWidget {
   const HabitsScreen({super.key});

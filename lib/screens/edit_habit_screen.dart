@@ -98,9 +98,9 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save habit: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to save habit: $e')));
     } finally {
       if (!mounted) return;
       setState(() {
@@ -129,9 +129,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Habit' : 'Add Habit'),
-      ),
+      appBar: AppBar(title: Text(_isEditing ? 'Edit Habit' : 'Add Habit')),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -154,8 +152,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 3,
-                validator: (value) =>
-                    _validateRequired(value, 'Description'),
+                validator: (value) => _validateRequired(value, 'Description'),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -193,8 +190,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
-                validator: (value) =>
-                    _validateInt(value, 'Total completions'),
+                validator: (value) => _validateInt(value, 'Total completions'),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -209,10 +205,10 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                 onPressed: _isSaving ? null : _saveHabit,
                 icon: _isSaving
                     ? const SizedBox(
-                  height: 18,
-                  width: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                     : const Icon(Icons.save),
                 label: Text(_isSaving ? 'Saving...' : 'Save Habit'),
               ),
