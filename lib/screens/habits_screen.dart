@@ -24,22 +24,63 @@ class _HabitsScreenState extends State<HabitsScreen> {
   String? _errorMessage;
 
   @override
+  void initState() {
+    super.initState();
+    _loadHabits();
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    //filter habits based on search query
-    final filteredHabits = habits.where((habit) {
-      final habitName = habit['habit_name'].toString().toLowerCase();
-      final category = habit['category'].toString().toLowerCase();
-      final query = _searchQuery.toLowerCase();
+  Future<void> _loadHabits() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final habits = await _habitRepository.getAllHabits();
+
+      setState(() {
+        _allHabits = habits;
+        _applyFilter();
+      });
+    }
+    catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load habits: $e';
+      });
+    }
+    finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _applyFilter() {
+    final query = _searchQuery.trim().toLowerCase();
+
+    if (query.isEmpty) {
+      _filteredHabits = List.from(_allHabits);
+      return;
+    }
+
+    _filteredHabits = _allHabits.where((habit) {
+      final habitName = habit.habitName.toString().toLowerCase();
+      final category = habit.category.toString().toLowerCase();
 
       return habitName.contains(query) || category.contains(query);
     }).toList();
+  }
 
+
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16),
