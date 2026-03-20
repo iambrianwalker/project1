@@ -29,4 +29,18 @@ class ThemeController extends ChangeNotifier {
     _isLoaded = true;
     notifyListeners();
   }
+
+  Future<void> setTheme(ThemeMode mode) async {
+    if (_themeMode == mode) return;
+
+    _themeMode = mode;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_themeKey, _themeMode.name);
+  }
+
+  Future<void> toggleTheme() async {
+    await setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+  }
 }
