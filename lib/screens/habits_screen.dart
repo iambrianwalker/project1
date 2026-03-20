@@ -134,20 +134,14 @@ class _HabitsScreenState extends State<HabitsScreen> {
                     onChanged: (value) {
                       setState(() {
                         _searchQuery = value;
+                        _applyFilter();
                       });
                     },
                   ),
                 ),
                 const SizedBox(width: 16),
                 AddHabitButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const EditHabitScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: _navigateToAddHabit,
                 ),
               ],
             ),
