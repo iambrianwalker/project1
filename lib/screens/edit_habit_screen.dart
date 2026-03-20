@@ -59,6 +59,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     _currentStreakController.dispose();
     _totalCompletionsController.dispose();
     _imageUrlController.dispose();
+    super.dispose();
   }
 
   @override
