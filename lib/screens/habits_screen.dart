@@ -94,7 +94,27 @@ class _HabitsScreenState extends State<HabitsScreen> {
     }
   }
 
+  Future<void> _navigateToHabitDetails(Habit habit) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HabitDetailsScreen(habit: habit),
+      ),
+    );
+  }
 
+  Future<void> _navigateToEditHabit(Habit habit) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditHabitScreen(habit: habit),
+      ),
+    );
+
+    if (result == true) {
+      await _loadHabits();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
