@@ -108,6 +108,51 @@ class _HabitsScreenState extends State<HabitsScreen> {
     }
   }
 
+  Future<void> _deleteHabit(Habit habit) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Habit'),
+          content: Text(
+            'Are you sure you want to delete "${habit.habitName}"?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      if (habit.id == null) {
+        throw Exception('Habit ID is null. Cannot delete habit.');
+      }
+
+      await _habitRepository.deleteHabit(habit.id!);
+      await _loadHabits();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${habit.habitName} deleted')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to delete habit: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -158,7 +203,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
       habits: _filteredHabits,
       onTap: _navigateToHabitDetails,
       onEdit: _navigateToEditHabit,
-      onDelete: _deleteHabit, //##TODO build function to delete a habit
+      onDelete: _deleteHabit,
     );
   }
 }
