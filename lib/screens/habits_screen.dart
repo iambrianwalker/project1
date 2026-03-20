@@ -48,13 +48,11 @@ class _HabitsScreenState extends State<HabitsScreen> {
         _allHabits = habits;
         _applyFilter();
       });
-    }
-    catch (e) {
+    } catch (e) {
       setState(() {
         _errorMessage = 'Failed to load habits: $e';
       });
-    }
-    finally {
+    } finally {
       setState(() {
         _isLoading = false;
       });
@@ -84,9 +82,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
   Future<void> _navigateToAddHabit() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => const EditHabitScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const EditHabitScreen()),
     );
 
     if (result == true) {
@@ -97,18 +93,14 @@ class _HabitsScreenState extends State<HabitsScreen> {
   Future<void> _navigateToHabitDetails(Habit habit) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => HabitDetailsScreen(habit: habit),
-      ),
+      MaterialPageRoute(builder: (context) => HabitDetailsScreen(habit: habit)),
     );
   }
 
   Future<void> _navigateToEditHabit(Habit habit) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EditHabitScreen(habit: habit),
-      ),
+      MaterialPageRoute(builder: (context) => EditHabitScreen(habit: habit)),
     );
 
     if (result == true) {
@@ -140,16 +132,33 @@ class _HabitsScreenState extends State<HabitsScreen> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                AddHabitButton(
-                  onPressed: _navigateToAddHabit,
-                ),
+                AddHabitButton(onPressed: _navigateToAddHabit),
               ],
             ),
             const SizedBox(height: 16),
-            Expanded(child: HabitList(habits: filteredHabits)),
+            Expanded(child: _buildBody()),
           ],
         ),
       ),
+    );
+  }
+
+  //widget for the body of this screen, responsible for pulling in Habit List
+  //and feeding callbacks
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_errorMessage != null) {
+      return Center(child: Text(_errorMessage!));
+    }
+
+    return HabitList(
+      habits: _filteredHabits,
+      onTap: _navigateToHabitDetails,
+      onEdit: _navigateToEditHabit,
+      onDelete: _deleteHabit, //##TODO build function to delete a habit
     );
   }
 }
@@ -190,7 +199,7 @@ class HabitsSearchBar extends StatelessWidget {
   }
 }
 
-//##TODO widget to add a habit
+//widget to add a habit
 class AddHabitButton extends StatelessWidget {
   final VoidCallback onPressed;
 
