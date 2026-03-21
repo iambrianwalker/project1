@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeController extends ChangeNotifier {
-  static const _themeKey = 'theme_mode';
+  static const String _themeKey = 'theme_mode';
+
+  final SharedPreferencesAsync _prefs = SharedPreferencesAsync();
 
   ThemeMode _themeMode = ThemeMode.system;
   bool _isLoaded = false;
 
   ThemeMode get themeMode => _themeMode;
-  bool get isDark => _themeMode == ThemeMode.dark;
   bool get isLoaded => _isLoaded;
+  bool get isDark => _themeMode == ThemeMode.dark;
+  bool get isLight => _themeMode == ThemeMode.light;
+  bool get isSystem => _themeMode == ThemeMode.system;
 
   Future<void> loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedTheme = prefs.getString(_themeKey);
+    final savedTheme = await _prefs.getString(_themeKey);
 
     switch (savedTheme) {
       case 'light':
@@ -21,6 +24,9 @@ class ThemeController extends ChangeNotifier {
         break;
       case 'dark':
         _themeMode = ThemeMode.dark;
+        break;
+      case 'system':
+        _themeMode = ThemeMode.system;
         break;
       default:
         _themeMode = ThemeMode.system;
@@ -35,9 +41,7 @@ class ThemeController extends ChangeNotifier {
 
     _themeMode = mode;
     notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_themeKey, _themeMode.name);
+    await _prefs.setString(_themeKey, _themeMode.name);
   }
 
   Future<void> toggleTheme() async {
