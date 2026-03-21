@@ -3,7 +3,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:habit_mastery/theme/app_theme_extensions.dart';
-import '../theme/app_colors_extension.dart';
 import '../theme/theme_controller.dart';
 import 'dashboard_screen.dart';
 import 'habits_screen.dart';
