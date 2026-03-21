@@ -50,7 +50,7 @@ class HabitRepository {
     final db = await _dbHelper.database;
     final maps = await db.query(
       'habits',
-      where: 'isActive = ?',
+      where: 'is_active = ?',
       whereArgs: [1],
     );
 
