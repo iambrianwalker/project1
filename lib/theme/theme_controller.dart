@@ -10,9 +10,13 @@ class ThemeController extends ChangeNotifier {
   bool _isLoaded = false;
 
   ThemeMode get themeMode => _themeMode;
+
   bool get isLoaded => _isLoaded;
+
   bool get isDark => _themeMode == ThemeMode.dark;
+
   bool get isLight => _themeMode == ThemeMode.light;
+
   bool get isSystem => _themeMode == ThemeMode.system;
 
   Future<void> loadTheme() async {
