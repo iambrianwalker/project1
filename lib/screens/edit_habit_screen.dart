@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/habit_model.dart';
 import '../repositories/habit_repository.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_theme_extensions.dart';
 
 class EditHabitScreen extends StatefulWidget {
   //this can be null to allow for using as add habit or edit habit
@@ -134,73 +136,65 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.screenPadding,
             children: [
+              Text(
+                _isEditing
+                    ? 'Update your habit details and save your changes.'
+                    : 'Create a new mission and start tracking progress.',
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _habitNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Habit Name',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Habit Name'),
                 validator: (value) => _validateRequired(value, 'Habit name'),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _habitDescriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 validator: (value) => _validateRequired(value, 'Description'),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _categoryController,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Category'),
                 validator: (value) => _validateRequired(value, 'Category'),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _frequencyController,
-                decoration: const InputDecoration(
-                  labelText: 'Frequency',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Frequency'),
                 validator: (value) => _validateRequired(value, 'Frequency'),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _currentStreakController,
-                decoration: const InputDecoration(
-                  labelText: 'Current Streak',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Current Streak'),
                 keyboardType: TextInputType.number,
                 validator: (value) => _validateInt(value, 'Current streak'),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _totalCompletionsController,
                 decoration: const InputDecoration(
                   labelText: 'Total Completions',
-                  border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) => _validateInt(value, 'Total completions'),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _imageUrlController,
                 decoration: const InputDecoration(
                   labelText: 'Image URL (optional)',
-                  border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               ElevatedButton.icon(
                 onPressed: _isSaving ? null : _saveHabit,
                 icon: _isSaving
@@ -209,7 +203,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                         width: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.save),
+                    : const Icon(Icons.save_rounded),
                 label: Text(_isSaving ? 'Saving...' : 'Save Habit'),
               ),
             ],
