@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/habit_model.dart';
 import '../repositories/habit_repository.dart';
+import '../theme/app_corners.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_theme_extensions.dart';
 import 'edit_habit_screen.dart';
 
 class HabitDetailsScreen extends StatefulWidget {
@@ -67,36 +70,194 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
       appBar: AppBar(title: Text(_habit.habitName)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _habit.habitName,
-                    style: Theme.of(context).textTheme.headlineMedium,
+          : ListView(
+              padding: AppSpacing.screenPadding,
+              children: [
+                Text(
+                  _habit.habitName,
+                  style: context.text.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
                   ),
-                  const SizedBox(height: 12),
-                  Text(_habit.habitDescription),
-                  const SizedBox(height: 16),
-                  Text('Category: ${_habit.category}'),
-                  Text('Frequency: ${_habit.frequency}'),
-                  Text('Current Streak: ${_habit.currentStreak}'),
-                  Text('Total Completions: ${_habit.totalCompletions}'),
-                  if (_habit.imageUrl != null &&
-                      _habit.imageUrl!.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Text('Image URL: ${_habit.imageUrl}'),
+                ),
+                AppSpacing.gapSm,
+                Text(
+                  _habit.habitDescription,
+                  style: context.text.bodyLarge?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+                AppSpacing.gapLg,
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    _DetailChip(
+                      icon: Icons.category_rounded,
+                      label: _habit.category,
+                      backgroundColor: context.appColors.brand.withValues(
+                        alpha: 0.12,
+                      ),
+                      foregroundColor: context.appColors.brand,
+                    ),
+                    _DetailChip(
+                      icon: Icons.repeat_rounded,
+                      label: _habit.frequency,
+                      backgroundColor: context.appColors.surfaceStrong,
+                      foregroundColor: context.colors.onSurface,
+                    ),
+                    _DetailChip(
+                      icon: Icons.local_fire_department_rounded,
+                      label: 'Streak: ${_habit.currentStreak}',
+                      backgroundColor: context.appColors.streak.withValues(
+                        alpha: 0.14,
+                      ),
+                      foregroundColor: context.appColors.streak,
+                    ),
+                    _DetailChip(
+                      icon: Icons.check_circle_rounded,
+                      label: 'Done: ${_habit.totalCompletions}',
+                      backgroundColor: context.appColors.success.withValues(
+                        alpha: 0.14,
+                      ),
+                      foregroundColor: context.appColors.success,
+                    ),
                   ],
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: _editHabit,
-                    icon: const Icon(Icons.edit),
-                    label: const Text('Edit Habit'),
+                ),
+                AppSpacing.gapXl,
+                _InfoSection(
+                  title: 'Details',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _InfoRow(label: 'Category', value: _habit.category),
+                      AppSpacing.gapMd,
+                      _InfoRow(label: 'Frequency', value: _habit.frequency),
+                      AppSpacing.gapMd,
+                      _InfoRow(
+                        label: 'Current Streak',
+                        value: _habit.currentStreak.toString(),
+                      ),
+                      AppSpacing.gapMd,
+                      _InfoRow(
+                        label: 'Total Completions',
+                        value: _habit.totalCompletions.toString(),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_habit.imageUrl != null && _habit.imageUrl!.isNotEmpty) ...[
+                  AppSpacing.gapLg,
+                  _InfoSection(
+                    title: 'Image URL',
+                    child: SelectableText(
+                      _habit.imageUrl!,
+                      style: context.text.bodyMedium,
+                    ),
                   ),
                 ],
+                AppSpacing.gapXl,
+                ElevatedButton.icon(
+                  onPressed: _editHabit,
+                  icon: const Icon(Icons.edit_rounded),
+                  label: const Text('Edit Habit'),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class _InfoSection extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _InfoSection({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: AppSpacing.cardPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: context.text.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
               ),
             ),
+            AppSpacing.gapMd,
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: context.text.bodyMedium?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: context.text.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+        ),
+      ],
+    );
+  }
+}
+
+class _DetailChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color backgroundColor;
+  final Color foregroundColor;
+
+  const _DetailChip({
+    required this.icon,
+    required this.label,
+    required this.backgroundColor,
+    required this.foregroundColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(AppCorners.pill),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: foregroundColor),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: context.text.labelMedium?.copyWith(
+              color: foregroundColor,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

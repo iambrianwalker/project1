@@ -1,6 +1,9 @@
 //widget to display a habit card
 import 'package:flutter/material.dart';
 import '../models/habit_model.dart';
+import '../theme/app_corners.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_theme_extensions.dart';
 
 class HabitCard extends StatelessWidget {
   final Habit habit;
@@ -19,13 +22,11 @@ class HabitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppCorners.lg),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -33,20 +34,22 @@ class HabitCard extends StatelessWidget {
                 habitName: habit.habitName,
                 category: habit.category,
               ),
-              const SizedBox(height: 8),
+              AppSpacing.gapSm,
               Text(
                 habit.habitDescription,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
-              const SizedBox(height: 12),
+              AppSpacing.gapMd,
               HabitStatsRow(
                 frequency: habit.frequency,
                 currentStreak: habit.currentStreak,
                 totalCompletions: habit.totalCompletions,
               ),
-              const SizedBox(height: 12),
+              AppSpacing.gapMd,
               HabitCardActions(onEdit: onEdit, onDelete: onDelete),
             ],
           ),
@@ -74,24 +77,22 @@ class HabitCardHeader extends StatelessWidget {
         Expanded(
           child: Text(
             habitName,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: context.text.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: Theme.of(
-              context,
-            ).colorScheme.primary.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(20),
+            color: context.appColors.brand.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(AppCorners.pill),
           ),
           child: Text(
             category,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w600,
+            style: context.text.labelMedium?.copyWith(
+              color: context.appColors.brand,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
@@ -116,17 +117,26 @@ class HabitStatsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
       children: [
-        HabitStatChip(icon: Icons.repeat, label: frequency),
         HabitStatChip(
-          icon: Icons.local_fire_department,
-          label: 'Streak: $currentStreak',
+          icon: Icons.repeat_rounded,
+          label: frequency,
+          backgroundColor: context.appColors.surfaceStrong,
+          foregroundColor: context.colors.onSurface,
         ),
         HabitStatChip(
-          icon: Icons.check_circle,
+          icon: Icons.local_fire_department_rounded,
+          label: 'Streak: $currentStreak',
+          backgroundColor: context.appColors.streak.withValues(alpha: 0.14),
+          foregroundColor: context.appColors.streak,
+        ),
+        HabitStatChip(
+          icon: Icons.check_circle_rounded,
           label: 'Done: $totalCompletions',
+          backgroundColor: context.appColors.success.withValues(alpha: 0.14),
+          foregroundColor: context.appColors.success,
         ),
       ],
     );
@@ -137,20 +147,38 @@ class HabitStatsRow extends StatelessWidget {
 class HabitStatChip extends StatelessWidget {
   final IconData icon;
   final String label;
+  final Color backgroundColor;
+  final Color foregroundColor;
 
-  const HabitStatChip({super.key, required this.icon, required this.label});
+  const HabitStatChip({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.backgroundColor,
+    required this.foregroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(AppCorners.md),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [Icon(icon, size: 16), const SizedBox(width: 6), Text(label)],
+        children: [
+          Icon(icon, size: 16, color: foregroundColor),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: context.text.labelMedium?.copyWith(
+              color: foregroundColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -169,17 +197,26 @@ class HabitCardActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
       children: [
         TextButton.icon(
           onPressed: onEdit,
-          icon: const Icon(Icons.edit, size: 18),
+          icon: const Icon(Icons.edit_rounded, size: 18),
           label: const Text('Edit'),
         ),
         TextButton.icon(
           onPressed: onDelete,
-          icon: const Icon(Icons.delete, size: 18),
-          label: const Text('Delete'),
+          icon: Icon(
+            Icons.delete_rounded,
+            size: 18,
+            color: context.appColors.danger,
+          ),
+          label: Text(
+            'Delete',
+            style: TextStyle(color: context.appColors.danger),
+          ),
         ),
       ],
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/habit_model.dart';
 import '../repositories/habit_repository.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_theme_extensions.dart';
 import 'habit_details_screen.dart';
 import 'edit_habit_screen.dart';
 import '../widgets/habit_list.dart';
@@ -123,7 +125,10 @@ class _HabitsScreenState extends State<HabitsScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Delete'),
+              child: Text(
+                'Delete',
+                style: TextStyle(color: context.appColors.danger),
+              ),
             ),
           ],
         );
@@ -156,12 +161,12 @@ class _HabitsScreenState extends State<HabitsScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const HabitsTitle(),
-            const SizedBox(height: 16),
+            AppSpacing.gapLg,
             Row(
               children: [
                 Expanded(
@@ -175,12 +180,12 @@ class _HabitsScreenState extends State<HabitsScreen> {
                     },
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AppSpacing.lg),
                 AddHabitButton(onPressed: _navigateToAddHabit),
               ],
             ),
-            const SizedBox(height: 16),
-            Expanded(child: _buildBody()),
+            AppSpacing.gapLg,
+            Expanded(child: _buildBody(context)),
           ],
         ),
       ),
@@ -189,13 +194,24 @@ class _HabitsScreenState extends State<HabitsScreen> {
 
   //widget for the body of this screen, responsible for pulling in Habit List
   //and feeding callbacks
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (_errorMessage != null) {
-      return Center(child: Text(_errorMessage!));
+      return Center(
+        child: Padding(
+          padding: AppSpacing.screenPadding,
+          child: Text(
+            _errorMessage!,
+            textAlign: TextAlign.center,
+            style: context.text.bodyMedium?.copyWith(
+              color: context.appColors.danger,
+            ),
+          ),
+        ),
+      );
     }
 
     return HabitList(
@@ -213,7 +229,10 @@ class HabitsTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Habits', style: Theme.of(context).textTheme.headlineMedium);
+    return Text(
+      'Habits',
+      style: context.text.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
+    );
   }
 }
 
@@ -235,9 +254,7 @@ class HabitsSearchBar extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: 'Search habits',
-        prefixIcon: const Icon(Icons.search),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
+        prefixIcon: const Icon(Icons.search_rounded),
       ),
     );
   }
@@ -253,7 +270,7 @@ class AddHabitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: onPressed,
-      icon: const Icon(Icons.add),
+      icon: const Icon(Icons.add_rounded),
       label: const Text('Add Habit'),
     );
   }
