@@ -54,7 +54,7 @@ class _HabitAICardState extends State<HabitAICard> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result.messege)),
+      SnackBar(content: Text(result.message)),
     );
   }
 
@@ -72,7 +72,7 @@ class _HabitAICardState extends State<HabitAICard> {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       child: Padding(
-        padding: const EdgetInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
