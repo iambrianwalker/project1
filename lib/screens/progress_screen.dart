@@ -19,6 +19,9 @@ class ProgressScreen extends StatefulWidget{
 }
 
 class _ProgressScreenState extends State<ProgressScreen>{
+  final HabitRepository _habitRepository = HabitRepository();
+  final HabitCompletionRepository _completionRepository = HabitCompletionRepository();
+
   //a page controller to help build a chart carousel
   late final PageController _chartPageController;
   int _currentChartPage = 0;
@@ -32,7 +35,10 @@ class _ProgressScreenState extends State<ProgressScreen>{
 
   //storage for habits and completions and custom ProgressSummary metrics
   List<Habit> _habits = [];
-  List<HabitCompletion> _completions = [];
+  List<HabitCompletion> _allCompletions = [];
+  List<HabitCompletion> _recentCompletions = [];
+  Map<int, List<HabitCompletion>> _completionMap = {};
+
   ProgressSummary? _summary;
 
   //storage for chart-ready data
@@ -48,7 +54,7 @@ class _ProgressScreenState extends State<ProgressScreen>{
   void initState() {
     super.initState();
     _chartPageController = PageController();
-    //_loadProgressData();
+    _loadProgressData();
   }
 
   @override
@@ -70,26 +76,73 @@ class _ProgressScreenState extends State<ProgressScreen>{
 
   //this method will choose which state to show, loading, error, no habits, etc.
   Widget _buildBody() {
-    return const Center(
-      child: Text('Under Construction'),
+    if (_isLoading) {
+      return _buildLoadingState();
+    }
+
+    if (_errorMessage != null) {
+      return _buildErrorState();
+    }
+
+    if (_hasNoHabits()) {
+      return _buildNoHabitsState();
+    }
+
+    if (_hasNoCompletions()) {
+      return _buildNoCompletionsState();
+    }
+
+    return RefreshIndicator(
+        onRefresh: _loadProgressData,
+        child: _buildContent()
     );
   }
 
   //method to fetch data from the database for this screen
   Future<void> _loadProgressData() async {
-    /*setState(() {
+    setState(() {
       _isLoading = true;
       _errorMessage = null;
-    });*/
+    });
 
-    //##TODO go and grab data for all the storage variables
+    try {
+      final habits = await _habitRepository.getAllHabits();
+      final completionMap = <int, List<HabitCompletion>>{};
+      final allCompletions = <HabitCompletion>[];
 
-    //##TODO check if mounted
+      for (final habit in habits) {
+        if (habit.id == null) continue;
 
-    //##TODO set new state
+        final completions =
+        await _completionRepository.getCompletionsForHabit(habit.id!);
+        completionMap[habit.id!] = completions;
+        allCompletions.addAll(completions);
+      }
 
-    //##TODO catch error
+      allCompletions.sort((a, b) => b.completedAt.compareTo(a.completedAt));
 
+      if (!mounted) return;
+
+      setState(() {
+        _habits = habits;
+        _completionMap = completionMap;
+        _allCompletions = allCompletions;
+        _recentCompletions = allCompletions.take(5).toList();
+      });
+
+      _rebuildDerivedData();
+
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Failed to load the progress data: $error';
+        _isLoading = false;
+      });
+    }
   }
 
   //this method will rebuild data after the selected date range changes
@@ -163,8 +216,15 @@ class _ProgressScreenState extends State<ProgressScreen>{
     throw UnimplementedError();
   }
 
+  //this method will return true when there are zero habits in storage
+  bool _hasNoHabits() {
+    return _habits.isEmpty;
+  }
 
-
+  //this method will return true when there are habits but no completions yet
+  bool _hasNoCompletions() {
+   return _allCompletions.isEmpty;
+  }
 
 }//end of progress screen state class
 
