@@ -145,6 +145,13 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
     }
   }
 
+  String _formatTime(DateTime dateTime) {
+    final hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    final period = dateTime.hour >= 12 ? 'pm' : 'am';
+    return '$hour:$minute$period';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,8 +252,7 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
                               final completedAt = completion.completedAt;
                               final dateText =
                                   '${completedAt.month}/${completedAt.day}/${completedAt.year}';
-                              final timeText =
-                                  '${completedAt.hour.toString().padLeft(2, '0')}:${completedAt.minute.toString().padLeft(2, '0')}';
+                              final timeText = _formatTime(completedAt);
 
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
