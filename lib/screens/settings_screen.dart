@@ -86,6 +86,8 @@ class SettingsScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              //##TODO add additional card for setting preferred start of week
+              //##TODO start week on Monday, or Sunday, for example
             ],
           ),
         );

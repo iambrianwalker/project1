@@ -45,7 +45,7 @@ class HabitCard extends StatelessWidget {
               ),
               AppSpacing.gapMd,
               HabitStatsRow(
-                frequency: habit.frequency,
+                frequency: habit.frequency.label,
                 currentStreak: habit.currentStreak,
                 totalCompletions: habit.totalCompletions,
               ),
