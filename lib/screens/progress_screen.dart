@@ -152,23 +152,97 @@ class _ProgressScreenState extends State<ProgressScreen>{
 
   //this method will build loading state while repository/service calls finish
   Widget _buildLoadingState() {
-    throw UnimplementedError();
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
   }
 
   //tis method will build the error staate and provide a retry action that calls
   //loadProgressData
   Widget _buildErrorState() {
-    throw UnimplementedError();
+    return Center(
+      child: Padding(
+        padding: AppSpacing.screenPadding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 48),
+            AppSpacing.gapLg,
+            Text(
+              'Just some error, nothing to see here!',
+              style: context.text.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            AppSpacing.gapSm,
+            Text(
+              _errorMessage ?? 'The progress data was not able to be loaded',
+              style: context.text.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            AppSpacing.gapLg,
+            FilledButton.icon(
+              onPressed: _loadProgressData,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   //this method will build the empty state shown when the database has no habits yet
   Widget _buildNoHabitsState() {
-    throw UnimplementedError();
+    return Center(
+      child: Padding(
+        padding: AppSpacing.screenPadding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.insights_outlined, size:48),
+            AppSpacing.gapLg,
+            Text(
+              'No habits yet.',
+              style: context.text.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            AppSpacing.gapSm,
+            Text(
+              'Create your first habit to start building progress data!',
+              style: context.text.bodyMedium,
+              textAlign: TextAlign.center,
+            )
+          ],
+        )
+      )
+    );
   }
 
   //this method will handle when habits exist but they have no completions yet
   Widget _buildNoCompletionsState() {
-    throw UnimplementedError();
+    return Center(
+      child: Padding(
+        padding: AppSpacing.screenPadding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.show_chart, size: 48),
+            AppSpacing.gapLg,
+            Text(
+              'You have no completions yet.',
+              style: context.text.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            AppSpacing.gapSm,
+            Text(
+              'Complete a habit to unlock charts and consistency tracking.',
+              style: context.text.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        )
+      )
+    );
   }
 
   //method to build the main scrollable progress content
