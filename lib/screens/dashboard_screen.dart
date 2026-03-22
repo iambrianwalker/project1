@@ -27,6 +27,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState(){
     super.initState();
-    
+
+    final habitRepo = HabitRepository();
+    final completionRepo = HabitCompletionRepository();
+
+    habitService = HabitService(
+      habitRepository: habitRepo,
+      completionRepository: completionRepo,
+    );
+
+    aiService = HabitAIService();
+
+    _loadDashboard();
   }
 }
