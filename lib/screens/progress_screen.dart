@@ -2,12 +2,13 @@
 //and transform that into chart ready datasets
 //the screen will show consistency, trends
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import '../models/habit_model.dart';
 import '../models/habit_completion.dart';
 import '../repositories/habit_repository.dart';
 import '../repositories/habit_completion_repository.dart';
-import '../services/habit_service.dart';
 import '../theme/app_theme_extensions.dart';
 import '../theme/app_spacing.dart';
 
@@ -129,7 +130,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         _recentCompletions = allCompletions.take(5).toList();
       });
 
-      //_rebuildDerivedData();
+      _rebuildDerivedData();
 
       if (!mounted) return;
       setState(() {
@@ -146,7 +147,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   //this method will rebuild data after the selected date range changes
   void _rebuildDerivedData() {
-    throw UnimplementedError();
+    _calculateSummaryMetrics();
+
+    if (!mounted) return;
+    setState(() {});
   }
 
   //this method will build loading state while repository/service calls finish
@@ -252,7 +256,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         AppSpacing.gapLg,
         _buildRangeSelector(),
         AppSpacing.gapLg,
-        //_buildSummarySection(),
+        _buildSummarySection(),
         AppSpacing.gapXl,
         //_buildChartCarouselSection(),
         AppSpacing.gapLg,
@@ -307,12 +311,103 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   //build the summary metrics area
   Widget _buildSummarySection() {
-    throw UnimplementedError();
+    final summary = _summary;
+    if (summary == null) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Habit Activity Summary',
+          style: context.text.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        AppSpacing.gapMd,
+        Card(
+          child: Padding(
+            padding: AppSpacing.cardPadding,
+            child: Column(
+              children: [
+                _buildSummaryRow(
+                  icon: Icons.check_circle_outline_rounded,
+                  value: '${summary.completionsInRange}',
+                  label: 'Completions in Range',
+                  subtitle: _selectedRange.label,
+                ),
+                const Divider(),
+                _buildSummaryRow(
+                  icon: Icons.history_rounded,
+                  value: '${summary.totalCompletions}',
+                  label: 'Total Completions',
+                  subtitle: 'All time',
+                ),
+                const Divider(),
+                _buildSummaryRow(
+                  icon: Icons.local_fire_department_rounded,
+                  value: '${summary.activeHabits}',
+                  label: 'Active Habits',
+                  subtitle: 'Currently active',
+                ),
+                const Divider(),
+                _buildSummaryRow(
+                  icon: Icons.bolt_rounded,
+                  value: '${summary.bestCurrentStreak}',
+                  label: 'Best Streak',
+                  subtitle: 'Current best',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  //a reusable metric card for the summary area
-  Widget _buildSummaryCard() {
-    throw UnimplementedError();
+  //individual rows for the summary metrics
+  Widget _buildSummaryRow({
+    required IconData icon,
+    required String value,
+    required String label,
+    String? subtitle,
+  }) {
+    return Padding(
+      padding: AppSpacing.tilePadding,
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: context.colors.primary),
+          AppSpacing.gapSm,
+          SizedBox(
+            width: 28,
+            child: Text(
+              value,
+              style: context.text.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          AppSpacing.gapSm,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: context.text.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (subtitle != null)
+                  Text(
+                    subtitle,
+                    style: context.text.bodySmall?.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   //the chart carousel area widget
@@ -351,8 +446,83 @@ class _ProgressScreenState extends State<ProgressScreen> {
     setState(() {
       _selectedRange = range;
     });
+
+    _rebuildDerivedData();
   }
 
+  Habit? _habitForId(int habitId) {
+    for (final habit in _habits) {
+      if (habit.id == habitId) return habit;
+    }
+    return null;
+  }
+
+  List<HabitCompletion> _getFilteredCompletions() {
+    final all = List<HabitCompletion>.from(_allCompletions);
+
+    if (_selectedRange == ProgressRange.allTime) {
+      return all;
+    }
+
+    final now = DateTime.now();
+    final start = switch (_selectedRange) {
+      ProgressRange.last7days => DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(const Duration(days: 6)),
+      ProgressRange.last30days => DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(const Duration(days: 29)),
+      ProgressRange.allTime => DateTime.fromMillisecondsSinceEpoch(0),
+    };
+
+    return all.where((completion) {
+      final completedOn = DateUtils.dateOnly(completion.completedAt);
+      return !completedOn.isBefore(start);
+    }).toList();
+  }
+
+  void _calculateSummaryMetrics() {
+    final filteredCompletions = _getFilteredCompletions();
+
+    final totalCompletions = _allCompletions.length;
+    final completionsInRange = filteredCompletions.length;
+    final activeHabits = _habits.where((habit) => habit.isActive).length;
+    final bestCurrentStreak = _habits.isEmpty
+        ? 0
+        : _habits.map((habit) => habit.currentStreak).fold<int>(0, math.max);
+
+    String? topHabitName;
+    if (_habitBreakdownSeries.isNotEmpty) {
+      topHabitName = _habitBreakdownSeries.first.habitName;
+    } else {
+      final counts = <int, int>{};
+      for (final completion in filteredCompletions) {
+        counts.update(
+          completion.habitId,
+          (value) => value + 1,
+          ifAbsent: () => 1,
+        );
+      }
+
+      if (counts.isNotEmpty) {
+        final sorted = counts.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
+        topHabitName = _habitForId(sorted.first.key)?.habitName;
+      }
+    }
+
+    _summary = ProgressSummary(
+      totalCompletions: totalCompletions,
+      completionsInRange: completionsInRange,
+      activeHabits: activeHabits,
+      bestCurrentStreak: bestCurrentStreak,
+      topHabitName: topHabitName,
+    );
+  }
 } //end of progress screen state class
 
 //used for the currently selected progress date window
@@ -377,7 +547,8 @@ class ProgressSummary {
   final int completionsInRange;
   final int activeHabits;
   final int bestCurrentStreak;
-  final int longestStreak;
+
+  //final int longestStreak;
   final String? topHabitName;
 
   const ProgressSummary({
@@ -385,7 +556,7 @@ class ProgressSummary {
     required this.completionsInRange,
     required this.activeHabits,
     required this.bestCurrentStreak,
-    required this.longestStreak,
+    //required this.longestStreak,
     required this.topHabitName,
   });
 }
