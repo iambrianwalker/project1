@@ -1,8 +1,8 @@
 import 'package:habit_mastery/repositories/habit_completion_repository.dart';
 import 'package:habit_mastery/repositories/habit_repository.dart';
 import 'complete_habit_result.dart';
-import 'models/habit_completion.dart';
-import 'models/habit_model.dart';
+import '../models/habit_completion.dart';
+import '../models/habit_model.dart';
 
 class HabitService {
   final HabitRepository habitRepository;

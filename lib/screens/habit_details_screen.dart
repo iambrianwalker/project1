@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:habit_mastery/habit_service.dart';
+import 'package:habit_mastery/services/habit_service.dart';
 import 'package:habit_mastery/models/habit_completion.dart';
 import 'package:habit_mastery/repositories/habit_completion_repository.dart';
 import '../models/habit_model.dart';

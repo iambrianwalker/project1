@@ -1,4 +1,4 @@
-import 'models/habit_model.dart';
+import '../models/habit_model.dart';
 
 class CompleteHabitResult {
   final bool success;
