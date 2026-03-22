@@ -22,7 +22,7 @@ class DashboardScreen extends StatefulWidget{
   });
 
   @override
-  State<DashboardScreen> createtate() => _DashboardScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
