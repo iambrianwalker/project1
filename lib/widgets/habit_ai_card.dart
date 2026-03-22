@@ -128,8 +128,20 @@ class _HabitAICardState extends State<HabitAICard> {
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.appColors.brand,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppCorners.md),
+                  ),
+                ),
                 onPressed: _completeHabit,
-                child: const Text('Complete'),
+                child: Text(
+                  'Complete',
+                  style: context.text.bodyMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ],
