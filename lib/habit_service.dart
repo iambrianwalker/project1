@@ -100,12 +100,41 @@ class HabitService {
   Future<bool> isHabitCompletableNow(Habit habit) async {
   }
 
-  //##TODO this method will look at all completion records for a habit
-  //and determine the actual streak from them
+  //this method looks at all completion records for a habit
+  //and determines the actual streak count from consecutive completions
   int _calculateCurrentStreak({
     required List<HabitCompletion> completions,
     required HabitFrequency frequency,
   }) {
+    if (completions.isEmpty) return 0;
+
+    final completedPeriods = completions
+      //normalize to start of the period for the given frequency
+      .map((completion) => _startOfPeriod(completion.completedAt, frequency))
+      //remove duplicates, defensive, shouldn't exist anyway
+      .toSet()
+      //back to list for sorting
+      .toList()
+      //sort newest to oldest
+      ..sort((a, b) => b.compareTo(a));
+
+    if (completedPeriods.isEmpty) return 0;
+
+    //count first record to begin streak
+    int streak = 1;
+    //return previous period
+    DateTime expectedPrevious =
+      _previousPeriodStart(completedPeriods.first, frequency);
+    //loop through the list incrementing streak count until a gap is found
+    for (int i = 1; i < completedPeriods.length; i++) {
+      if (_sameDate(completedPeriods[i], expectedPrevious)) {
+        streak++;
+        expectedPrevious = _previousPeriodStart(expectedPrevious, frequency);
+      } else {
+        break;
+      }
+    }
+    return streak;
   }
 
   //this method takes a habit and the time stamp from refreshHabitStats
@@ -128,21 +157,44 @@ class HabitService {
     }
   }
 
-  //##TODO this method will give us the beginning of a habits' frequency period
+  //this method gives us the beginning of a habits' frequency period
   //the start of the day if a daily habit, or the start of the week if a weekly habit
   //helper method for calculating current streak
   DateTime _startOfPeriod(DateTime date, HabitFrequency frequency) {
+    switch (frequency) {
+      case HabitFrequency.daily:
+        return DateTime(date.year, date.month, date.day);
+
+      case HabitFrequency.weekly:
+        final start = date.subtract(Duration(days: date.weekday - 1));
+        return DateTime(date.year, date.month, start.day);
+
+      case HabitFrequency.monthly:
+        return DateTime(date.year, date.month, 1);
+    }
   }
 
-  //##TODO this method will give us the beginning of the period immediately before the given one
+  //this method gives us the beginning of the period immediately before the given one
   //for a daily habit it would be the start of the prior day, or the previous week start for weekly
   //helper method for calculating current streak
   DateTime _previousPeriodStart(DateTime date, HabitFrequency frequency) {
+    switch (frequency) {
+      case HabitFrequency.daily:
+        return DateTime(date.year, date.month, date.day - 1);
+
+      case HabitFrequency.weekly:
+        return DateTime(date.year, date.month, date.day - 7);
+
+      case HabitFrequency.monthly:
+        return DateTime(date.year, date.month - 1, 1);
+    }
   }
 
-  //##TODO this method will compare two normalized dates to see if they represent the same period start
+  //this method compares two normalized dates to see if they represent the same period start
   //helper method for calculating current streak
   bool _sameDate(DateTime a, DateTime b) {
-
+    return a.year == b.year &&
+      a.month == b.month &&
+      a.day == b.day;
   }
 }
