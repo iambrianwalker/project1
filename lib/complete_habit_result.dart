@@ -2,12 +2,12 @@ import 'models/habit_model.dart';
 
 class CompleteHabitResult {
   final bool success;
-  final Habit? updatedhabit;
+  final Habit? updatedHabit;
   final String message;
 
   CompleteHabitResult({
     required this.success,
-    this.updatedhabit,
+    this.updatedHabit,
     required this.message,
   });
 }
