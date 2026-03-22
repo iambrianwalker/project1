@@ -15,5 +15,5 @@ class HabitAICard extends StatefulWidget {
   });
 
   @override
-  
+  State<HabitAICard> createState() => _HabitAICardState();
 }
