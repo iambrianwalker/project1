@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:habit_mastery/models/habit_completion.dart';
 import '../models/habit_model.dart';
@@ -141,9 +140,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 AppSpacing.gapLg,
 
-                
-              ],,)
-          }),))
+                //Recent Activity Placeholder
+                _sectionTitle("Recent Activity"),
+                Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color:Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(child: Text("Recent Completions, Streaks, etc")),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
   }
   String _greeting(){
     final hour = DateTime.now().hour;
