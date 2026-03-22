@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:habit_mastery/models/habit_completion.dart';
 import '../models/habit_model.dart';
+import '../repositories/habit_repository.dart';
 import '../services/habit_service.dart';
 import '../services/habit_ai_service.dart';
 import '../repositories/habit_repository.dart';
@@ -12,9 +13,9 @@ import '../widgets/habit_ai_card.dart';
 
 
 class DashboardScreen extends StatefulWidget{
-  final HabitService habitService;
+  final HabitRepository habitRepository;
 
-  const DashboardScreen({super.key, required this.habitService});
+  const DashboardScreen({super.key, required this.habitRepository});
 
   @override
   State<DashboardScreen> createtate() => _DashboardScreenState();
@@ -32,5 +33,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState(){
     super.initState();
     _loadDashboardData();
+  }
+
+  Future<void> _loadDashboardData() async {
+    //Active Habits
+    _activeHabitsFuture = widget.habitRepository.getActiveHabits();
+
   }
 }
