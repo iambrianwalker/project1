@@ -110,18 +110,19 @@ class _HabitAICardState extends State<HabitAICard> {
               ),
             ),
 
-            const SizedBox(height: 8),
+            AppSpacing.gapSm,
 
             //Micro goal
-            Text(
-              "$goal",
-              style: const TextStyle(
-                fontSize: 13,
-                fontStyle: FontStyle.italic,
+            if (goal != null)
+              Text(
+                goal!,
+                style: context.text.bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
-            ),
 
-            const SizedBox(height: 12),
+            AppSpacing.gapMd,
 
             //Complete button
             Align(
