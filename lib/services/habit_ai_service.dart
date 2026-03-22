@@ -22,5 +22,9 @@ class HabitAIService{
     if (analysis.streak > 0) {
       return "You're building momentum. Keep it going!";
     }
+
+    return "Start small. Just show up today.";
   }
+
+  
 }
