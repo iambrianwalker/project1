@@ -30,5 +30,11 @@ class HabitAIService{
     if (analysis.daysSinceLast > 1) {
       return "Do a minimal version of '${habit.habitName}' today.";
     }
+
+    if (analysis.streak >= 5) {
+      return "Push slightly beyond your normal effort.";
+    }
+
+    return "Complete '${habit.habitName}' today."; 
   }
 }
