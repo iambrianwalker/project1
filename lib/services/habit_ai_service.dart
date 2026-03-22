@@ -26,5 +26,9 @@ class HabitAIService{
     return "Start small. Just show up today.";
   }
 
-  
+  String generateMicroGoal(Habit habit, HabitAnalysis analysis) {
+    if (analysis.daysSinceLast > 1) {
+      return "Do a minimal version of '${habit.habitName}' today.";
+    }
+  }
 }
