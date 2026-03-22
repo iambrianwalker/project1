@@ -74,7 +74,7 @@ Used for lightweight user settings:
 **Features:**
 
 * Active habits summary
-* Daily completion stats
+* Habit completion stats
 * Longest streak tracking
 * AI encouragement message
 * Recent activity preview
