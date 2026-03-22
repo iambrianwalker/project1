@@ -11,10 +11,7 @@ class HabitCompletionRepository {
   Future<int> insertCompletion(HabitCompletion completion) async {
     final db = await _dbHelper.database;
 
-    return await db.insert(
-      tableName,
-      completion.toMap(),
-    );
+    return await db.insert(tableName, completion.toMap());
   }
 
   //this function should let us grab all completion history for a habit
@@ -36,20 +33,16 @@ class HabitCompletionRepository {
   //in that date range
   //useful for progress charts, weekly summaries, calendar heatmaps
   Future<List<HabitCompletion>> getCompletionsForHabitInRange(
-      int habitId,
-      DateTime start,
-      DateTime end
-      ) async {
+    int habitId,
+    DateTime start,
+    DateTime end,
+  ) async {
     final db = await _dbHelper.database;
 
     final maps = await db.query(
       tableName,
       where: 'habit_id = ? AND completed_at >= ? AND completed_at < ?',
-      whereArgs: [
-        habitId,
-        start.toIso8601String(),
-        end.toIso8601String(),
-      ],
+      whereArgs: [habitId, start.toIso8601String(), end.toIso8601String()],
       orderBy: 'completed_at ASC',
     );
     return maps.map(HabitCompletion.fromMap).toList();
@@ -78,7 +71,7 @@ class HabitCompletionRepository {
     final db = await _dbHelper.database;
 
     final result = await db.rawQuery(
-      'SELECT COUNT (*) as count FROM $tableName WHERE habit_id = ?',
+      'SELECT COUNT(*) as count FROM $tableName WHERE habit_id = ?',
       [habitId],
     );
 
@@ -90,16 +83,22 @@ class HabitCompletionRepository {
   Future<bool> hasCompletionForPeriod({
     required int habitId,
     required HabitFrequency frequency,
-    DateTime? now
-    }) async {
+    DateTime? now,
+  }) async {
     final reference = now ?? DateTime.now();
     final start = _startOfPeriod(reference, frequency);
     final end = _endOfPeriod(reference, frequency);
 
-    final completions = await getCompletionsForHabitInRange(habitId, start, end);
+    final completions = await getCompletionsForHabitInRange(
+      habitId,
+      start,
+      end,
+    );
     return completions.isNotEmpty;
   }
 
+  //##TODO perhaps adjust these to account for the SharedPreferences setting
+  //##TODO for using Sunday or Monday as the start of the week
   //this utilizes DateTime to return clean values for our time period check
   DateTime _startOfPeriod(DateTime date, HabitFrequency frequency) {
     switch (frequency) {
@@ -108,12 +107,12 @@ class HabitCompletionRepository {
         return DateTime(date.year, date.month, date.day);
 
       //goes back to monday and returns the current weeks' Monday DateTime
-        case HabitFrequency.weekly:
+      case HabitFrequency.weekly:
         final start = date.subtract(Duration(days: date.weekday - 1));
         return DateTime(start.year, start.month, start.day);
 
       //goes back to start of current month and returns first day DateTime
-        case HabitFrequency.monthly:
+      case HabitFrequency.monthly:
         return DateTime(date.year, date.month, 1);
     }
   }
@@ -125,14 +124,14 @@ class HabitCompletionRepository {
         return DateTime(date.year, date.month, date.day + 1);
 
       //uses previous method to find date for this weeks' monday then adds 7 to it to find next weeks' monday DateTime
-        case HabitFrequency.weekly:
+      case HabitFrequency.weekly:
         final start = _startOfPeriod(date, HabitFrequency.weekly);
         return start.add(const Duration(days: 7));
 
       //gives us Jan 1 of next year, or gives us day 1 of the next month of current year
-        case HabitFrequency.monthly:
+      case HabitFrequency.monthly:
         if (date.month == 12) {
-          return DateTime(date.year +1, 1, 1);
+          return DateTime(date.year + 1, 1, 1);
         }
         return DateTime(date.year, date.month + 1, 1);
     }
