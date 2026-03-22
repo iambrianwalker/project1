@@ -26,6 +26,23 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
     _habit = widget.habit;
   }
 
+  //##TODO _completeHabit function
+  /*
+  Future<void> _completeHabit(Habit habit) async {
+    final result = await habitService.completeHabit(habit);
+
+    if (result.success && result.updatedHabit != null) {
+      setState(() {
+        _habit = result.updatedHabit!;
+      });
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(result.message)),
+    );
+  }
+  */
+
   Future<void> _editHabit() async {
     final result = await Navigator.push(
       context,
@@ -101,7 +118,7 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
                     ),
                     _DetailChip(
                       icon: Icons.repeat_rounded,
-                      label: _habit.frequency,
+                      label: _habit.frequency.label,
                       backgroundColor: context.appColors.surfaceStrong,
                       foregroundColor: context.colors.onSurface,
                     ),
@@ -131,7 +148,7 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
                     children: [
                       _InfoRow(label: 'Category', value: _habit.category),
                       AppSpacing.gapMd,
-                      _InfoRow(label: 'Frequency', value: _habit.frequency),
+                      _InfoRow(label: 'Frequency', value: _habit.frequency.label),
                       AppSpacing.gapMd,
                       _InfoRow(
                         label: 'Current Streak',
@@ -161,6 +178,7 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
                   icon: const Icon(Icons.edit_rounded),
                   label: const Text('Edit Habit'),
                 ),
+                //##TODO complete habit button likely here
               ],
             ),
     );
