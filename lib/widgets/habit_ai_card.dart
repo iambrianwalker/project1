@@ -17,3 +17,30 @@ class HabitAICard extends StatefulWidget {
   @override
   State<HabitAICard> createState() => _HabitAICardState();
 }
+
+class _HabitAICardState extends State<HabitAICard> {
+  String? message;
+  String? goal;
+  bool isLoading = true;
+
+  late HabitAnalyzer analyzer;
+  late HabitAIService aiService;
+
+  @override
+  void initState() {
+    super.initState();
+
+    analyzer = HabitAnalyzer(widget.habitService);
+    aiService = HabitAIService();
+
+    _loadAI();
+  }
+
+  Future<void> _loadAI() async {
+    final analysis = await analyzer.analyze(widget.habit);
+
+    setState((){
+      
+    })
+  }
+}
