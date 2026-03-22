@@ -58,5 +58,65 @@ class _HabitAICardState extends State<HabitAICard> {
     );
   }
 
-  
+  @override
+  Widget  build(BuildContext context) {
+    if (isLoading) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Text("Loading..."),
+        ),
+      );
+    }
+
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      child: Padding(
+        padding: const EdgetInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //Habit Name
+            Text(
+              widget.habit.habitName,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            //AI Message
+            Text(
+              message ?? '',
+              style: const TextStyle(fontSize: 14),
+            ),
+
+            const SizedBox(height: 8),
+
+            //Micro goal
+            Text(
+              "$goal",
+              style: const TextStyle(
+                fontSize: 13,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            //Complete button
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                onPressed: _completeHabit,
+                child: const Text('Complete'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
