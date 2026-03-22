@@ -114,6 +114,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 AppSpacing.gapLg,
 
+                //Weekly Progress Placeholder
+                _sectionTitle("Weekly Progress"),
+                Containter(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(child: Text("Weekly Progress Chart Here?")),
+                ),
+                AppSpacing.gapLg,
+
               ],,)
           }),))
   }
@@ -141,6 +153,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(title, style: context.text.titleMedium),
     );
   }
 }
