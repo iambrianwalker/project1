@@ -42,7 +42,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _loadDashboardData() async {
     //Active Habits
-    _activeHabitsFuture = widget.habitRepository.getActiveHabits();
-
+    _activeHabitsFuture = widget.habitRepository.getActiveHabits(); 
   }
+
+  int _completedToday(List<Habit> habits) {
+    final now = DateTime.now();
+    int count = 0;
+    for (var habit in habits) {
+      if (habit.lastCompletedAt != null &&
+      habit.lastCompletedAt!.year == now.year &&
+      habit.lastCompletedAt!.month == now.month &&
+      habit.lastCompletedAt!.day == now.day) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  
 }
