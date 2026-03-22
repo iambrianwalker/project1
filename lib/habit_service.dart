@@ -95,9 +95,19 @@ class HabitService {
     return updatedHabit;
   }
 
-  //##TODO this method checks whether a completion already exists for the current frequency period
+  //this method checks if a completion already exists for the current frequency period
   //returns true only if the habit is allowed to be completed right now
+  //useful to adjust the complete button in the UI based on ability to complete habit
   Future<bool> isHabitCompletableNow(Habit habit) async {
+    if (habit.id == null) return false;
+
+    final alreadyCompleted = await completionRepository.hasCompletionForPeriod(
+        habitId: habit.id!,
+        frequency: habit.frequency,
+        now: DateTime.now()
+    );
+
+    return !alreadyCompleted;
   }
 
   //this method looks at all completion records for a habit
@@ -167,7 +177,7 @@ class HabitService {
 
       case HabitFrequency.weekly:
         final start = date.subtract(Duration(days: date.weekday - 1));
-        return DateTime(date.year, date.month, start.day);
+        return DateTime(start.year, start.month, start.day);
 
       case HabitFrequency.monthly:
         return DateTime(date.year, date.month, 1);
