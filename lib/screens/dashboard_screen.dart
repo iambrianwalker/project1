@@ -113,7 +113,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
                 AppSpacing.gapLg,
-                
+
               ],,)
           }),))
   }
@@ -122,5 +122,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (hour < 12) return 'morning';
     if (hour < 18) return 'afternoon';
     return 'evening';
+  }
+
+  Widget _statCard(String title, String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: context.text.bodyMedium),
+            AppSpacing.gapSm,
+            Text(value, style: context.text.headlineSmall),
+          ],
+        ),
+      ),
+    );
   }
 }
