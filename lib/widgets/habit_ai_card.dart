@@ -100,12 +100,14 @@ class _HabitAICardState extends State<HabitAICard> {
               ),
             ),
 
-            const SizedBox(height: 8),
+            AppSpacing.gapSm,
 
             //AI Message
             Text(
               message ?? '',
-              style: const TextStyle(fontSize: 14),
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
 
             const SizedBox(height: 8),
