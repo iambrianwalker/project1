@@ -90,7 +90,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 AppSpacing.gapLg,
                 //Active Habits Section
+                Text(
+                  "Active Habits",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                AppSpacing.gapSm,
+                if (habits.isEmpty)
+                  Text("No active habits yet.", style: context.text.bodyMedium),
+                ...habits.map((habit) => HabitAICard(
+                  habit: habit,
+                  habitService: widget.habitService,
+                )),
 
+                AppSpacing.gapLg,
+
+                //Stats Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _statCard("Completed Today", "$completedToday"),
+                    _statCard("Longest Streak", "$longestStreak"),
+                  ],
+                ),
+                AppSpacing.gapLg,
+                
               ],,)
           }),))
   }
