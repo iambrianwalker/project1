@@ -45,4 +45,18 @@ class _HabitAICardState extends State<HabitAICard> {
       isLoading = false;
     });
   }
+
+  Future<void> _completeHabit() async {
+    final result = await widget.habitService.completeHabit(widget.habit);
+
+    if (result.success) {
+      await _loadAI(); //refreshes AI after completion
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(result.messege)),
+    );
+  }
+
+  
 }
