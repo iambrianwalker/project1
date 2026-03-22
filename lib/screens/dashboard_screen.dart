@@ -11,33 +11,5 @@ import '../widgets/habit_ai_card.dart';
 
 
 class DashboardScreen extends StatefulWidget{
-  const DashboardScreen({super.key});
-
-  @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
-}
-class _DashboardScreenState extends State<DashboardScreen> {
-  late HabitService habitService;
-  late HabitAIService aiService;
-
-  List<Habit> habits = [];
-  bool isLoading = true;
-  String aiMessage = "";
-
-  @override
-  void initState(){
-    super.initState();
-
-    final habitRepo = HabitRepository();
-    final completionRepo = HabitCompletionRepository();
-
-    habitService = HabitService(
-      habitRepository: habitRepo,
-      completionRepository: completionRepo,
-    );
-
-    aiService = HabitAIService();
-
-    _loadDashboard();
-  }
+  
 }
