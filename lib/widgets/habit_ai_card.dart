@@ -3,6 +3,9 @@ import '../models/habit_model.dart';
 import '../services/habit_service.dart';
 import '../services/habit_analyzer.dart';
 import '../services/habit_ai_service.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_theme_extensions.dart';
+import '../theme/app_corners.dart';
 
 class HabitAICard extends StatefulWidget {
   final Habit habit;
@@ -61,27 +64,39 @@ class _HabitAICardState extends State<HabitAICard> {
   @override
   Widget  build(BuildContext context) {
     if (isLoading) {
-      return const Card(
+      return Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppCorners.lg),
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Text("Loading..."),
+          padding: AppSpacing.cardPadding,
+          child: Center(
+            child: Text(
+              "Loading...",
+              style: context.text.bodyMedium,
+            ),
+          ),
         ),
       );
     }
 
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppCorners.lg),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //Habit Name
             Text(
               widget.habit.habitName,
-              style: const TextStyle(
-                fontSize: 18,
+              style: context.text.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: context.colors.onSurface,
               ),
             ),
 
