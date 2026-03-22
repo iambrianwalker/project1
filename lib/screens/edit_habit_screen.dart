@@ -18,12 +18,11 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
   final _formKey = GlobalKey<FormState>();
   final HabitRepository _habitRepository = HabitRepository();
 
+  HabitFrequency? _selectedFrequency;
+
   late final TextEditingController _habitNameController;
   late final TextEditingController _habitDescriptionController;
   late final TextEditingController _categoryController;
-  late final TextEditingController _frequencyController;
-  late final TextEditingController _currentStreakController;
-  late final TextEditingController _totalCompletionsController;
   late final TextEditingController _imageUrlController;
 
   bool _isSaving = false;
@@ -34,6 +33,8 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
   void initState() {
     super.initState();
 
+    _selectedFrequency = widget.habit?.frequency;
+
     _habitNameController = TextEditingController(
       text: widget.habit?.habitName ?? '',
     );
@@ -42,15 +43,6 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     );
     _categoryController = TextEditingController(
       text: widget.habit?.category ?? '',
-    );
-    _frequencyController = TextEditingController(
-      text: widget.habit?.frequency ?? '',
-    );
-    _currentStreakController = TextEditingController(
-      text: widget.habit?.currentStreak.toString() ?? '0',
-    );
-    _totalCompletionsController = TextEditingController(
-      text: widget.habit?.totalCompletions.toString() ?? '0',
     );
     _imageUrlController = TextEditingController(
       text: widget.habit?.imageUrl ?? '',
@@ -62,21 +54,21 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     _habitNameController.dispose();
     _habitDescriptionController.dispose();
     _categoryController.dispose();
-    _frequencyController.dispose();
-    _currentStreakController.dispose();
-    _totalCompletionsController.dispose();
     _imageUrlController.dispose();
     super.dispose();
   }
 
   Future<void> _saveHabit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedFrequency == null) return;
 
     setState(() {
       _isSaving = true;
     });
 
     try {
+      final now = DateTime.now();
+
       final habit = Habit(
         id: widget.habit?.id,
         imageUrl: _imageUrlController.text.trim().isEmpty
@@ -85,9 +77,13 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
         habitName: _habitNameController.text.trim(),
         habitDescription: _habitDescriptionController.text.trim(),
         category: _categoryController.text.trim(),
-        frequency: _frequencyController.text.trim(),
-        currentStreak: int.parse(_currentStreakController.text.trim()),
-        totalCompletions: int.parse(_totalCompletionsController.text.trim()),
+        frequency: _selectedFrequency!,
+        currentStreak: widget.habit?.currentStreak ?? 0,
+        totalCompletions: widget.habit?.totalCompletions ?? 0,
+        isActive: widget.habit?.isActive ?? true,
+        lastCompletedAt: widget.habit?.lastCompletedAt,
+        createdAt: widget.habit?.createdAt ?? now,
+        updatedAt: now,
       );
 
       if (_isEditing) {
@@ -118,12 +114,9 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     return null;
   }
 
-  String? _validateInt(String? value, String label) {
-    if (value == null || value.trim().isEmpty) {
-      return '$label is required';
-    }
-    if (int.tryParse(value.trim()) == null) {
-      return '$label must be a whole number';
+  String? _validateFrequency(HabitFrequency? value) {
+    if (value == null) {
+      return 'Frequency is required';
     }
     return null;
   }
@@ -166,26 +159,21 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                 validator: (value) => _validateRequired(value, 'Category'),
               ),
               AppSpacing.gapLg,
-              TextFormField(
-                controller: _frequencyController,
+              DropdownButtonFormField<HabitFrequency>(
+                initialValue: _selectedFrequency,
                 decoration: const InputDecoration(labelText: 'Frequency'),
-                validator: (value) => _validateRequired(value, 'Frequency'),
-              ),
-              AppSpacing.gapLg,
-              TextFormField(
-                controller: _currentStreakController,
-                decoration: const InputDecoration(labelText: 'Current Streak'),
-                keyboardType: TextInputType.number,
-                validator: (value) => _validateInt(value, 'Current streak'),
-              ),
-              AppSpacing.gapLg,
-              TextFormField(
-                controller: _totalCompletionsController,
-                decoration: const InputDecoration(
-                  labelText: 'Total Completions',
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) => _validateInt(value, 'Total completions'),
+                items: HabitFrequency.values.map((frequency) {
+                  return DropdownMenuItem<HabitFrequency>(
+                    value: frequency,
+                    child: Text(frequency.label),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedFrequency = value;
+                  });
+                },
+                validator: _validateFrequency,
               ),
               AppSpacing.gapLg,
               TextFormField(
