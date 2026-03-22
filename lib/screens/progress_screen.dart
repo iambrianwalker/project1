@@ -11,16 +11,17 @@ import '../services/habit_service.dart';
 import '../theme/app_theme_extensions.dart';
 import '../theme/app_spacing.dart';
 
-class ProgressScreen extends StatefulWidget{
+class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
 
   @override
   State<ProgressScreen> createState() => _ProgressScreenState();
 }
 
-class _ProgressScreenState extends State<ProgressScreen>{
+class _ProgressScreenState extends State<ProgressScreen> {
   final HabitRepository _habitRepository = HabitRepository();
-  final HabitCompletionRepository _completionRepository = HabitCompletionRepository();
+  final HabitCompletionRepository _completionRepository =
+      HabitCompletionRepository();
 
   //a page controller to help build a chart carousel
   late final PageController _chartPageController;
@@ -48,7 +49,7 @@ class _ProgressScreenState extends State<ProgressScreen>{
   List<WeekdayCompletionPoint> _weekdayPatternSeries = [];
 
   //maybe some insights
-  List<ProgressInsight> _insights =[];
+  List<ProgressInsight> _insights = [];
 
   @override
   void initState() {
@@ -63,13 +64,10 @@ class _ProgressScreenState extends State<ProgressScreen>{
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Progress'),
-      ),
+      appBar: AppBar(title: const Text('Progress')),
       body: _buildBody(),
     );
   }
@@ -93,8 +91,8 @@ class _ProgressScreenState extends State<ProgressScreen>{
     }
 
     return RefreshIndicator(
-        onRefresh: _loadProgressData,
-        child: _buildContent()
+      onRefresh: _loadProgressData,
+      child: _buildContent(),
     );
   }
 
@@ -113,8 +111,9 @@ class _ProgressScreenState extends State<ProgressScreen>{
       for (final habit in habits) {
         if (habit.id == null) continue;
 
-        final completions =
-        await _completionRepository.getCompletionsForHabit(habit.id!);
+        final completions = await _completionRepository.getCompletionsForHabit(
+          habit.id!,
+        );
         completionMap[habit.id!] = completions;
         allCompletions.addAll(completions);
       }
@@ -130,7 +129,7 @@ class _ProgressScreenState extends State<ProgressScreen>{
         _recentCompletions = allCompletions.take(5).toList();
       });
 
-      _rebuildDerivedData();
+      //_rebuildDerivedData();
 
       if (!mounted) return;
       setState(() {
@@ -152,9 +151,7 @@ class _ProgressScreenState extends State<ProgressScreen>{
 
   //this method will build loading state while repository/service calls finish
   Widget _buildLoadingState() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
   //tis method will build the error staate and provide a retry action that calls
@@ -199,7 +196,7 @@ class _ProgressScreenState extends State<ProgressScreen>{
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.insights_outlined, size:48),
+            const Icon(Icons.insights_outlined, size: 48),
             AppSpacing.gapLg,
             Text(
               'No habits yet.',
@@ -211,10 +208,10 @@ class _ProgressScreenState extends State<ProgressScreen>{
               'Create your first habit to start building progress data!',
               style: context.text.bodyMedium,
               textAlign: TextAlign.center,
-            )
+            ),
           ],
-        )
-      )
+        ),
+      ),
     );
   }
 
@@ -240,24 +237,72 @@ class _ProgressScreenState extends State<ProgressScreen>{
               textAlign: TextAlign.center,
             ),
           ],
-        )
-      )
+        ),
+      ),
     );
   }
 
   //method to build the main scrollable progress content
   Widget _buildContent() {
-    throw UnimplementedError();
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: AppSpacing.screenPadding,
+      children: [
+        _buildHeaderSection(),
+        AppSpacing.gapLg,
+        _buildRangeSelector(),
+        AppSpacing.gapLg,
+        //_buildSummarySection(),
+        AppSpacing.gapXl,
+        //_buildChartCarouselSection(),
+        AppSpacing.gapLg,
+        //##TODO could use some sections below the chart section
+      ],
+    );
   }
 
   //build the top section that explains the screens purpose
   Widget _buildHeaderSection() {
-    throw UnimplementedError();
+    final subtitle = switch (_selectedRange) {
+      ProgressRange.last7days => 'Your consistency over the last 7 days',
+      ProgressRange.last30days => 'Your consistency over the last 30 days.',
+      ProgressRange.allTime => 'Your full completion history.',
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'A peek at your progress',
+          style: context.text.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        AppSpacing.gapSm,
+        Text(
+          subtitle,
+          style: context.text.bodyMedium?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
   }
 
   //build the date range selector
   Widget _buildRangeSelector() {
-    throw UnimplementedError();
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: ProgressRange.values.map((range) {
+        final isSelected = range == _selectedRange;
+        return ChoiceChip(
+          label: Text(range.label),
+          selected: isSelected,
+          onSelected: (_) => _onRangeChanged(range),
+        );
+      }).toList(),
+    );
   }
 
   //build the summary metrics area
@@ -265,7 +310,7 @@ class _ProgressScreenState extends State<ProgressScreen>{
     throw UnimplementedError();
   }
 
-  //a resuable metric card for the summary area
+  //a reusable metric card for the summary area
   Widget _buildSummaryCard() {
     throw UnimplementedError();
   }
@@ -286,7 +331,7 @@ class _ProgressScreenState extends State<ProgressScreen>{
   }
 
   //chart page indicator dots
-  Widget _buidChartPageIndicator() {
+  Widget _buildChartPageIndicator() {
     throw UnimplementedError();
   }
 
@@ -297,16 +342,33 @@ class _ProgressScreenState extends State<ProgressScreen>{
 
   //this method will return true when there are habits but no completions yet
   bool _hasNoCompletions() {
-   return _allCompletions.isEmpty;
+    return _allCompletions.isEmpty;
   }
 
-}//end of progress screen state class
+  void _onRangeChanged(ProgressRange range) {
+    if (range == _selectedRange) return;
+
+    setState(() {
+      _selectedRange = range;
+    });
+  }
+
+} //end of progress screen state class
 
 //used for the currently selected progress date window
-enum ProgressRange {
-  last7days,
-  last30days,
-  allTime,
+enum ProgressRange { last7days, last30days, allTime }
+
+extension ProgressRangeExtension on ProgressRange {
+  String get label {
+    switch (this) {
+      case ProgressRange.last7days:
+        return '7D';
+      case ProgressRange.last30days:
+        return '30D';
+      case ProgressRange.allTime:
+        return 'All';
+    }
+  }
 }
 
 //little model to represent summary metrics
@@ -333,10 +395,7 @@ class DailyCompletionPoint {
   final DateTime date;
   final int count;
 
-  const DailyCompletionPoint({
-    required this.date,
-    required this.count,
-  });
+  const DailyCompletionPoint({required this.date, required this.count});
 }
 
 //model to represent one point in the habit breakdown chart
@@ -344,10 +403,7 @@ class HabitBreakdownPoint {
   final String habitName;
   final int count;
 
-  const HabitBreakdownPoint({
-    required this.habitName,
-    required this.count,
-  });
+  const HabitBreakdownPoint({required this.habitName, required this.count});
 }
 
 //model to represent one point in the weekday pattern chart
