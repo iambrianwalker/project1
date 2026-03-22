@@ -59,5 +59,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return count;
   }
 
-  
+  int _longestStreak(List<Habit> habits) {
+    if (habits.isEmpty) return 0;
+    return habits.map((h) => h.currentStreak).reduce((a, b) => a > b ? a : b);
+  }
 }
