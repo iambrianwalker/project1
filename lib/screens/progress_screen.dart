@@ -38,6 +38,7 @@ class _ProgressScreenState extends State<ProgressScreen>{
   //storage for chart-ready data
   Map<DateTime, int> _heatmapData = {};
   List<HabitBreakdownPoint> _habitBreakdownSeries = [];
+  List<DailyCompletionPoint> _dailyCompletionSeries = [];
   List<WeekdayCompletionPoint> _weekdayPatternSeries = [];
 
   //maybe some insights
@@ -91,8 +92,81 @@ class _ProgressScreenState extends State<ProgressScreen>{
 
   }
 
+  //this method will rebuild data after the selected date range changes
+  void _rebuildDerivedData() {
+    throw UnimplementedError();
+  }
+
+  //this method will build loading state while repository/service calls finish
+  Widget _buildLoadingState() {
+    throw UnimplementedError();
+  }
+
+  //tis method will build the error staate and provide a retry action that calls
+  //loadProgressData
+  Widget _buildErrorState() {
+    throw UnimplementedError();
+  }
+
+  //this method will build the empty state shown when the database has no habits yet
+  Widget _buildNoHabitsState() {
+    throw UnimplementedError();
+  }
+
+  //this method will handle when habits exist but they have no completions yet
+  Widget _buildNoCompletionsState() {
+    throw UnimplementedError();
+  }
+
   //method to build the main scrollable progress content
-}
+  Widget _buildContent() {
+    throw UnimplementedError();
+  }
+
+  //build the top section that explains the screens purpose
+  Widget _buildHeaderSection() {
+    throw UnimplementedError();
+  }
+
+  //build the date range selector
+  Widget _buildRangeSelector() {
+    throw UnimplementedError();
+  }
+
+  //build the summary metrics area
+  Widget _buildSummarySection() {
+    throw UnimplementedError();
+  }
+
+  //a resuable metric card for the summary area
+  Widget _buildSummaryCard() {
+    throw UnimplementedError();
+  }
+
+  //the chart carousel area widget
+  Widget _buildChartCarouselSection() {
+    throw UnimplementedError();
+  }
+
+  //actual PageView for the chart carousel
+  Widget _buildChartCarousel() {
+    throw UnimplementedError();
+  }
+
+  //chart card
+  Widget _buildChartCard() {
+    throw UnimplementedError();
+  }
+
+  //chart page indicator dots
+  Widget _buidChartPageIndicator() {
+    throw UnimplementedError();
+  }
+
+
+
+
+}//end of progress screen state class
 
 //used for the currently selected progress date window
 enum ProgressRange {
