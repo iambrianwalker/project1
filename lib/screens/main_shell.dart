@@ -2,6 +2,9 @@
 //to switch between main screens: Dashboard, Habits, Progress, and Settings
 
 import 'package:flutter/material.dart';
+import 'package:habit_mastery/repositories/habit_completion_repository.dart';
+import 'package:habit_mastery/repositories/habit_repository.dart';
+import 'package:habit_mastery/services/habit_service.dart';
 import 'package:habit_mastery/theme/app_theme_extensions.dart';
 import '../theme/theme_controller.dart';
 import 'dashboard_screen.dart';
@@ -26,7 +29,13 @@ class _MainShellState extends State<MainShell> {
     final appColors = context.appColors;
 
     final screens = [
-      DashboardScreen(),
+      DashboardScreen(
+        habitRepository: HabitRepository(),
+        habitService: HabitService(
+          habitRepository: HabitRepository(), 
+          completionRepository: HabitCompletionRepository()
+        ),
+      ),
       HabitsScreen(),
       ProgressScreen(),
       SettingsScreen(themeController: widget.themeController),
