@@ -3,14 +3,18 @@
 //the screen will show consistency, trends
 
 import 'dart:math' as math;
+import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/material.dart';
+import 'package:chartify/chartify.dart';
+import 'package:habit_mastery/theme/app_corners.dart';
 import '../models/habit_model.dart';
 import '../models/habit_completion.dart';
 import '../repositories/habit_repository.dart';
 import '../repositories/habit_completion_repository.dart';
 import '../theme/app_theme_extensions.dart';
 import '../theme/app_spacing.dart';
+import '../theme/chart_palette.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -45,12 +49,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   //storage for chart-ready data
   Map<DateTime, int> _heatmapData = {};
-  List<HabitBreakdownPoint> _habitBreakdownSeries = [];
   List<DailyCompletionPoint> _dailyCompletionSeries = [];
-  List<WeekdayCompletionPoint> _weekdayPatternSeries = [];
+
+  //storage for chart-ready data
+  // List<HabitBreakdownPoint> _habitBreakdownSeries = [];
+  // List<WeekdayCompletionPoint> _weekdayPatternSeries = [];
 
   //maybe some insights
-  List<ProgressInsight> _insights = [];
+  // List<ProgressInsight> _insights = [];
 
   @override
   void initState() {
@@ -147,6 +153,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   //this method will rebuild data after the selected date range changes
   void _rebuildDerivedData() {
+    _buildDailyCompletionSeries();
+    _buildHeatmapData();
     _calculateSummaryMetrics();
 
     if (!mounted) return;
@@ -155,7 +163,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   //this method will build loading state while repository/service calls finish
   Widget _buildLoadingState() {
-    return const Center(child: CircularProgressIndicator());
+    return Center(
+      child: CircularProgressIndicator(color: context.appColors.brand),
+    );
   }
 
   //tis method will build the error staate and provide a retry action that calls
@@ -167,7 +177,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48),
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: context.appColors.warning,
+            ),
             AppSpacing.gapLg,
             Text(
               'Just some error, nothing to see here!',
@@ -177,7 +191,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             AppSpacing.gapSm,
             Text(
               _errorMessage ?? 'The progress data was not able to be loaded',
-              style: context.text.bodyMedium,
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             AppSpacing.gapLg,
@@ -200,7 +216,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.insights_outlined, size: 48),
+            Icon(
+              Icons.insights_outlined,
+              size: 48,
+              color: context.appColors.brand,
+            ),
             AppSpacing.gapLg,
             Text(
               'No habits yet.',
@@ -210,7 +230,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             AppSpacing.gapSm,
             Text(
               'Create your first habit to start building progress data!',
-              style: context.text.bodyMedium,
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -227,7 +249,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.show_chart, size: 48),
+            Icon(Icons.show_chart, size: 48, color: context.appColors.chart1),
             AppSpacing.gapLg,
             Text(
               'You have no completions yet.',
@@ -237,7 +259,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             AppSpacing.gapSm,
             Text(
               'Complete a habit to unlock charts and consistency tracking.',
-              style: context.text.bodyMedium,
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -258,7 +282,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
         AppSpacing.gapLg,
         _buildSummarySection(),
         AppSpacing.gapXl,
-        //_buildChartCarouselSection(),
+        _buildChartCarouselSection(),
+        AppSpacing.gapLg,
+        _buildRecentActivitySection(),
         AppSpacing.gapLg,
         //##TODO could use some sections below the chart section
       ],
@@ -323,38 +349,45 @@ class _ProgressScreenState extends State<ProgressScreen> {
         ),
         AppSpacing.gapMd,
         Card(
-          child: Padding(
-            padding: AppSpacing.cardPadding,
-            child: Column(
-              children: [
-                _buildSummaryRow(
-                  icon: Icons.check_circle_outline_rounded,
-                  value: '${summary.completionsInRange}',
-                  label: 'Completions in Range',
-                  subtitle: _selectedRange.label,
-                ),
-                const Divider(),
-                _buildSummaryRow(
-                  icon: Icons.history_rounded,
-                  value: '${summary.totalCompletions}',
-                  label: 'Total Completions',
-                  subtitle: 'All time',
-                ),
-                const Divider(),
-                _buildSummaryRow(
-                  icon: Icons.local_fire_department_rounded,
-                  value: '${summary.activeHabits}',
-                  label: 'Active Habits',
-                  subtitle: 'Currently active',
-                ),
-                const Divider(),
-                _buildSummaryRow(
-                  icon: Icons.bolt_rounded,
-                  value: '${summary.bestCurrentStreak}',
-                  label: 'Best Streak',
-                  subtitle: 'Current best',
-                ),
-              ],
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.appColors.surfaceSoft,
+              borderRadius: BorderRadius.circular(AppCorners.lg),
+              border: Border.all(color: context.appColors.cardBorder),
+            ),
+            child: Padding(
+              padding: AppSpacing.cardPadding,
+              child: Column(
+                children: [
+                  _buildSummaryRow(
+                    icon: Icons.check_circle_outline_rounded,
+                    value: '${summary.completionsInRange}',
+                    label: 'Completions in Range',
+                    subtitle: _selectedRange.label,
+                  ),
+                  Divider(color: context.appColors.cardBorder, height: 1),
+                  _buildSummaryRow(
+                    icon: Icons.history_rounded,
+                    value: '${summary.totalCompletions}',
+                    label: 'Total Completions',
+                    subtitle: 'All time',
+                  ),
+                  Divider(color: context.appColors.cardBorder, height: 1),
+                  _buildSummaryRow(
+                    icon: Icons.local_fire_department_rounded,
+                    value: '${summary.activeHabits}',
+                    label: 'Active Habits',
+                    subtitle: 'Currently active',
+                  ),
+                  Divider(color: context.appColors.cardBorder, height: 1),
+                  _buildSummaryRow(
+                    icon: Icons.bolt_rounded,
+                    value: '${summary.bestCurrentStreak}',
+                    label: 'Best Streak',
+                    subtitle: 'Current best',
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -373,7 +406,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       padding: AppSpacing.tilePadding,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: context.colors.primary),
+          Icon(icon, size: 20, color: context.appColors.brand),
           AppSpacing.gapSm,
           SizedBox(
             width: 28,
@@ -412,22 +445,489 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   //the chart carousel area widget
   Widget _buildChartCarouselSection() {
-    throw UnimplementedError();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Progress Charts',
+          style: context.text.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        AppSpacing.gapMd,
+        SizedBox(height: 360, child: _buildChartCarousel()),
+        AppSpacing.gapMd,
+        Center(child: _buildChartPageIndicator()),
+      ],
+    );
   }
 
   //actual PageView for the chart carousel
   Widget _buildChartCarousel() {
-    throw UnimplementedError();
+    return ScrollConfiguration(
+      behavior: MaterialScrollBehavior().copyWith(
+        dragDevices: const {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.trackpad,
+          PointerDeviceKind.stylus,
+          PointerDeviceKind.unknown,
+        },
+      ),
+      child: PageView(
+        controller: _chartPageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentChartPage = index;
+          });
+        },
+        children: [
+          _buildChartCard(
+            title: 'Completion Trend',
+            subtitle: 'Your completions across time',
+            child: _buildCompletionTrendChart(),
+          ),
+          _buildChartCard(
+            title: 'Consistency Heatmap',
+            subtitle: 'Days you got it done',
+            child: _buildConsistencyHeatmap(),
+          ),
+        ],
+      ),
+    );
   }
 
   //chart card
-  Widget _buildChartCard() {
-    throw UnimplementedError();
+  Widget _buildChartCard({
+    required String title,
+    required String subtitle,
+    required Widget child,
+  }) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        decoration: BoxDecoration(
+          color: context.appColors.surfaceSoft,
+          borderRadius: BorderRadius.circular(AppCorners.lg),
+          border: Border.all(color: context.appColors.cardBorder),
+        ),
+        child: Padding(
+          padding: AppSpacing.cardPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: context.text.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              AppSpacing.gapXs,
+              Text(
+                subtitle,
+                style: context.text.bodySmall?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+              AppSpacing.gapMd,
+              Expanded(child: child),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   //chart page indicator dots
   Widget _buildChartPageIndicator() {
-    throw UnimplementedError();
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(2, (index) {
+        final isActive = index == _currentChartPage;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          height: 8,
+          width: isActive ? 22 : 8,
+          decoration: BoxDecoration(
+            color: isActive
+                ? context.appColors.brand
+                : context.colors.outline.withValues(alpha: 0.35),
+            borderRadius: BorderRadius.circular(AppCorners.pill),
+          ),
+        );
+      }),
+    );
+  }
+
+  //this method will build a line chart using chartify
+  Widget _buildCompletionTrendChart() {
+    if (_dailyCompletionSeries.isEmpty) {
+      return Center(
+        child: Text(
+          'No completion data in this range yet.',
+          style: context.text.bodyMedium?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+      );
+    }
+
+    final chartColors = ChartPalette.chartColors(context);
+    final lineColor = chartColors.first;
+
+    final points = List.generate(_dailyCompletionSeries.length, (index) {
+      final item = _dailyCompletionSeries[index];
+      return DataPoint<int, double>(x: index, y: item.count.toDouble());
+    });
+
+    final maxCount = _dailyCompletionSeries
+        .map((e) => e.count)
+        .fold<int>(0, math.max);
+
+    final yMax = math.max(1, maxCount).toDouble();
+    final width = MediaQuery.sizeOf(context).width;
+    final labelStep = switch (_selectedRange) {
+      ProgressRange.last7days => width < 420 ? 3 : 2,
+      ProgressRange.last30days => width < 420 ? 10 : 7,
+      ProgressRange.allTime => math.max(
+        1,
+        (_dailyCompletionSeries.length / 6).ceil(),
+      ),
+    };
+
+    return LineChart(
+      data: LineChartData(
+        series: [
+          LineSeries<int, double>(
+            name: 'Completions',
+            data: points,
+            color: lineColor,
+            strokeWidth: 3,
+            curved: false,
+            showMarkers: true,
+            markerSize: 6,
+            fillArea: true,
+            areaOpacity: 0.10,
+          ),
+        ],
+        xAxis: AxisConfig(
+          label: 'Day',
+          labelFormatter: (value) {
+            final index = value.toInt();
+            if (index < 0 || index >= _dailyCompletionSeries.length) return '';
+
+            if (index != 0 &&
+                index != _dailyCompletionSeries.length - 1 &&
+                index % labelStep != 0) {
+              return '';
+            }
+
+            final point = _dailyCompletionSeries[index];
+            return '${point.date.month}/${point.date.day}';
+          },
+        ),
+        yAxis: AxisConfig(
+          label: 'Completions',
+          min: 0,
+          max: yMax,
+          labelFormatter: (value) {
+            if (value % 1 != 0) return '';
+            return value.toInt().toString();
+          },
+        ),
+      ),
+      tooltip: const TooltipConfig(
+        enabled: true,
+        showIndicatorLine: true,
+        showIndicatorDot: true,
+      ),
+      showCrosshair: true,
+      animation: const ChartAnimation(
+        duration: Duration(milliseconds: 800),
+        type: AnimationType.draw,
+      ),
+    );
+  }
+
+  //this method will build a heatMap using chartify
+  Widget _buildConsistencyHeatmap() {
+    if (_heatmapData.isEmpty) {
+      return Center(
+        child: Text(
+          'No heatmap data in this range yet.',
+          style: context.text.bodyMedium?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+      );
+    }
+
+    final heatColors = ChartPalette.heatmapColors(context);
+    final data =
+        _heatmapData.entries
+            .map(
+              (entry) => CalendarDataPoint(
+                date: entry.key,
+                value: entry.value.toDouble(),
+              ),
+            )
+            .toList()
+          ..sort((a, b) => a.date.compareTo(b.date));
+
+    final sortedDates = data.map((e) => e.date).toList();
+    final start = sortedDates.first;
+    final end = sortedDates.last;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.calendar_month_rounded,
+              size: 16,
+              color: context.appColors.badge,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '${_formatMonthDay(start)} - ${_formatMonthDay(end)}',
+              style: context.text.bodySmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _buildHeatmapWeekdayHeader(),
+        const SizedBox(height: 8),
+        Expanded(
+          child: CalendarHeatmapChart(
+            data: CalendarHeatmapData(
+              data: data,
+              colorStops: heatColors,
+              cellSize: _selectedRange == ProgressRange.last30days ? 10 : 12,
+              cellSpacing: 3,
+              cellRadius: 3,
+              showDayLabels: false,
+              showMonthLabels: false,
+            ),
+            tooltip: const TooltipConfig(enabled: true),
+            animation: const ChartAnimation(
+              duration: Duration(milliseconds: 900),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        _buildHeatmapLegend(heatColors),
+      ],
+    );
+  }
+
+  //this method will provide the single letter day of the week for the heatMap header
+  Widget _buildHeatmapWeekdayHeader() {
+    final style = context.text.labelSmall?.copyWith(
+      color: context.colors.onSurfaceVariant,
+      fontWeight: FontWeight.w600,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('S', style: style),
+          Text('M', style: style),
+          Text('T', style: style),
+          Text('W', style: style),
+          Text('T', style: style),
+          Text('F', style: style),
+          Text('S', style: style),
+        ],
+      ),
+    );
+  }
+
+  //this method provides the heatMap with the legend just below the heatMap itself
+  Widget _buildHeatmapLegend(List<Color> heatColors) {
+    return Row(
+      children: [
+        Text(
+          'Less',
+          style: context.text.bodySmall?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(width: 8),
+        ...List.generate(heatColors.length, (index) {
+          return Padding(
+            padding: EdgeInsets.only(
+              right: index == heatColors.length - 1 ? 0 : 4,
+            ),
+            child: _buildHeatLegendSwatch(heatColors[index]),
+          );
+        }),
+        const SizedBox(width: 8),
+        Text(
+          'More',
+          style: context.text.bodySmall?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  //this method build the individual colors with decorations and borders on the legend
+  Widget _buildHeatLegendSwatch(Color color) {
+    return Container(
+      width: 12,
+      height: 12,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(AppCorners.sm),
+        border: Border.all(color: context.appColors.cardBorder),
+      ),
+    );
+  }
+
+  //this method provides the screen with the recent activity section
+  Widget _buildRecentActivitySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recent Completions',
+          style: context.text.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        AppSpacing.gapMd,
+        Card(
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.appColors.surfaceSoft,
+              borderRadius: BorderRadius.circular(AppCorners.lg),
+              border: Border.all(color: context.appColors.cardBorder),
+            ),
+            child: Padding(
+              padding: AppSpacing.cardPadding,
+              child: _recentCompletions.isEmpty
+                  ? Text(
+                      'No recent completions yet.',
+                      style: context.text.bodyMedium?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
+                    )
+                  : Column(
+                      children: List.generate(_recentCompletions.length, (
+                        index,
+                      ) {
+                        final completion = _recentCompletions[index];
+                        final habit = _habitForId(completion.habitId);
+                        final isLast = index == _recentCompletions.length - 1;
+
+                        return Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.check_circle_rounded,
+                                  size: 18,
+                                  color: context.appColors.success,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    habit?.habitName ?? 'Unknown habit',
+                                    style: context.text.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  _formatCompletionTimestamp(
+                                    completion.completedAt,
+                                  ),
+                                  style: context.text.bodySmall?.copyWith(
+                                    color: context.colors.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (!isLast) ...[
+                              const SizedBox(height: 12),
+                              Divider(
+                                color: context.appColors.cardBorder,
+                                height: 1,
+                              ),
+                              const SizedBox(height: 12),
+                            ],
+                          ],
+                        );
+                      }),
+                    ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  //helper method to provide heatmap with abrr for month
+  String _formatMonthDay(DateTime date) {
+    const months = [
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    return '${months[date.month]} ${date.day}';
+  }
+
+  //helper method for recent activity screen
+  String _formatCompletionTimestamp(DateTime dateTime) {
+    final date = DateUtils.dateOnly(dateTime);
+    final today = DateUtils.dateOnly(DateTime.now());
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    final hour = dateTime.hour == 0
+        ? 12
+        : dateTime.hour > 12
+        ? dateTime.hour - 12
+        : dateTime.hour;
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    final meridiem = dateTime.hour >= 12 ? 'PM' : 'AM';
+    final timeLabel = '$hour:$minute $meridiem';
+
+    if (date == today) return 'Today • $timeLabel';
+    if (date == yesterday) return 'Yesterday • $timeLabel';
+
+    return '${_formatMonthDay(date)} • $timeLabel';
+  }
+
+  DateTime _rangeStartForChart() {
+    final now = DateUtils.dateOnly(DateTime.now());
+
+    switch (_selectedRange) {
+      case ProgressRange.last7days:
+        return now.subtract(const Duration(days: 6));
+      case ProgressRange.last30days:
+        return now.subtract(const Duration(days: 29));
+      case ProgressRange.allTime:
+        if (_allCompletions.isEmpty) return now;
+        return _allCompletions
+            .map((completion) => DateUtils.dateOnly(completion.completedAt))
+            .reduce((a, b) => a.isBefore(b) ? a : b);
+    }
   }
 
   //this method will return true when there are zero habits in storage
@@ -485,6 +985,43 @@ class _ProgressScreenState extends State<ProgressScreen> {
     }).toList();
   }
 
+  void _buildDailyCompletionSeries() {
+    final filtered = _getFilteredCompletions();
+    final counts = <DateTime, int>{};
+
+    for (final completion in filtered) {
+      final date = DateUtils.dateOnly(completion.completedAt);
+      counts.update(date, (value) => value + 1, ifAbsent: () => 1);
+    }
+
+    final start = _rangeStartForChart();
+    final end = DateUtils.dateOnly(DateTime.now());
+
+    final points = <DailyCompletionPoint>[];
+    var current = start;
+
+    while (!current.isAfter(end)) {
+      points.add(
+        DailyCompletionPoint(date: current, count: counts[current] ?? 0),
+      );
+      current = current.add(const Duration(days: 1));
+    }
+
+    _dailyCompletionSeries = points;
+  }
+
+  void _buildHeatmapData() {
+    final filtered = _getFilteredCompletions();
+    final data = <DateTime, int>{};
+
+    for (final completion in filtered) {
+      final date = DateUtils.dateOnly(completion.completedAt);
+      data.update(date, (value) => value + 1, ifAbsent: () => 1);
+    }
+
+    _heatmapData = data;
+  }
+
   void _calculateSummaryMetrics() {
     final filteredCompletions = _getFilteredCompletions();
 
@@ -496,9 +1033,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         : _habits.map((habit) => habit.currentStreak).fold<int>(0, math.max);
 
     String? topHabitName;
-    if (_habitBreakdownSeries.isNotEmpty) {
-      topHabitName = _habitBreakdownSeries.first.habitName;
-    } else {
+    if (filteredCompletions.isNotEmpty) {
       final counts = <int, int>{};
       for (final completion in filteredCompletions) {
         counts.update(
@@ -508,11 +1043,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
         );
       }
 
-      if (counts.isNotEmpty) {
-        final sorted = counts.entries.toList()
-          ..sort((a, b) => b.value.compareTo(a.value));
-        topHabitName = _habitForId(sorted.first.key)?.habitName;
-      }
+      final sorted = counts.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+      topHabitName = _habitForId(sorted.first.key)?.habitName;
     }
 
     _summary = ProgressSummary(
