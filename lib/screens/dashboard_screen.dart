@@ -11,5 +11,10 @@ import '../widgets/habit_ai_card.dart';
 
 
 class DashboardScreen extends StatefulWidget{
-  
+  final HabitService habitService;
+
+  const DashboardScreen({super.key, required this.habitService});
+
+  @override
+  State<DashboardScreen> createtate() => _DashboardScreenState();
 }
