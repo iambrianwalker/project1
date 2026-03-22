@@ -24,25 +24,41 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
 
-  @override
-  Widget build(BuildContext context) {
-    final appColors = context.appColors;
+  late final HabitRepository _habitRepository;
+  late final HabitCompletionRepository _completionRepository;
+  late final HabitService _habitService;
 
-    final screens = [
+  late final List<Widget> _screens;
+
+  @override
+  void initState(){
+    super.initState();
+
+    _habitRepository = HabitRepository();
+    _completionRepository = HabitCompletionRepository();
+
+    _habitService = HabitService(
+      habitRepository: _habitRepository, 
+      completionRepository: _completionRepository
+    );
+
+    _screens = [
       DashboardScreen(
-        habitRepository: HabitRepository(),
-        habitService: HabitService(
-          habitRepository: HabitRepository(), 
-          completionRepository: HabitCompletionRepository()
-        ),
+        habitRepository: _habitRepository, 
+        habitService: _habitService
       ),
       HabitsScreen(),
       ProgressScreen(),
       SettingsScreen(themeController: widget.themeController),
     ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appColors = context.appColors;
 
     return Scaffold(
-      body: screens[_selectedIndex],
+      body: _screens[_selectedIndex],
       bottomNavigationBar: DecoratedBox(
         decoration: BoxDecoration(
           border: Border(top: BorderSide(color: appColors.navBorder, width: 1)),
