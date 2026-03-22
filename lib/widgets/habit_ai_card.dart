@@ -40,7 +40,9 @@ class _HabitAICardState extends State<HabitAICard> {
     final analysis = await analyzer.analyze(widget.habit);
 
     setState((){
-      
-    })
+      message = aiService.generateMessage(widget.habit, analysis);
+      goal = aiService.generateMicroGoal(widget.habit, analysis);
+      isLoading = false;
+    });
   }
 }
