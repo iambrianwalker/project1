@@ -27,7 +27,7 @@ class DashboardScreen extends StatefulWidget{
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  late Future<List> _activeHabitsFuture;
+  late Future<List<Habit>> _activeHabitsFuture;
   late Future<int> _completedTodayFuture;
   late Future<int> _longestStreakFuture;
   String? _aiBuddyMessage;
@@ -62,5 +62,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _longestStreak(List<Habit> habits) {
     if (habits.isEmpty) return 0;
     return habits.map((h) => h.currentStreak).reduce((a, b) => a > b ? a : b);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: AppSpacing.screenPadding,
+      child: SingleChildScrollView(
+        child: FutureBuilder<List<Habit>>(
+          future: _activeHabitsFuture,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final habits = snapshot.data!;
+
+            final completedToday = _completedToday(habits);
+            final longestStreak = _longestStreak(habits);
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //Greeting / Motivational Text
+                Text(
+                  "Good ${_greeting()}, let's crush some habits today!",
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                AppSpacing.gapLg,
+                //Active Habits Section
+
+              ],,)
+          }),))
+  }
+  String _greeting(){
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'morning';
+    if (hour < 18) return 'afternoon';
+    return 'evening';
   }
 }
