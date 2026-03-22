@@ -40,7 +40,7 @@ class HabitCompletion {
       habitId: map['habit_id'] as int,
       completedAt: DateTime.parse(map['completed_at'] as String),
       createdAt: map['created_at'] != null
-        ? DateTime.parse(map['create_at'] as String)
+        ? DateTime.parse(map['created_at'] as String)
         : DateTime.now(),
     );
   }
