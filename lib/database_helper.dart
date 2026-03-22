@@ -30,8 +30,13 @@ class DatabaseHelper {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    await db.execute(
-      '''
+    await _createHabitsTable(db);
+    await _createHabitCompletionsTable(db);
+    await _createHabitCompletionIndexes(db);
+  }
+
+  Future<void> _createHabitsTable(Database db) async {
+    await db.execute('''
       CREATE TABLE habits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         image_url TEXT,
@@ -46,25 +51,30 @@ class DatabaseHelper {
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
-      '''
-    );
-    await db.execute(
-      '''
+    ''');
+  }
+  Future<void> _createHabitCompletionsTable(Database db) async {
+    await db.execute('''
       CREATE TABLE habit_completions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         habit_id INTEGER NOT NULL,
         completed_at TEXT NOT NULL,
         created_at TEXT NOT NULL,
-        FOREIGN KEY (habit_id) REFERENCE habits(id) ON DELETE CASCADE
-      );
-      
+        FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
+      )
+      ''');
+  }
+
+  Future<void> _createHabitCompletionIndexes(Database db) async {
+    await db.execute('''
       CREATE INDEX idx_habit_completions_habit_id
-      ON habit_completions(habit_id);
-      
+      ON habit_completions(habit_id)      
+    ''');
+
+    await db.execute('''
       CREATE INDEX idx_habit_completions_habit_id_completed_at
-      ON habit_completions(habit_id, completed_at);
-      '''
-    );
+      ON habit_completions(habit_id, completed_at)    
+    ''');
   }
 
   //testing method below here
@@ -74,7 +84,13 @@ class DatabaseHelper {
     print('=== HABITS ===');
     final habits = await db.query('habits');
     for (final habit in habits) {
-      print(habits);
+      print(habit);
+    }
+
+    print('=== HABIT COMPLETIONS ===');
+    final completions = await db.query('habit_completions');
+    for (final completion in completions) {
+      print(completion);
     }
   }
 }
