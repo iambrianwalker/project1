@@ -30,12 +30,11 @@ class DatabaseHelper {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    await _createHabitsTable(db);
-    await _createHabitCompletionsTable(db);
+    await _createAllTables(db);
     await _createHabitCompletionIndexes(db);
   }
 
-  Future<void> _createHabitsTable(Database db) async {
+  Future<void> _createAllTables(Database db) async {
     await db.execute('''
       CREATE TABLE habits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
