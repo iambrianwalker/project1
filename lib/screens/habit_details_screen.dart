@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:habit_mastery/habit_service.dart';
+import 'package:habit_mastery/models/habit_completion.dart';
+import 'package:habit_mastery/repositories/habit_completion_repository.dart';
 import '../models/habit_model.dart';
 import '../repositories/habit_repository.dart';
 import '../theme/app_corners.dart';
@@ -17,31 +20,89 @@ class HabitDetailsScreen extends StatefulWidget {
 
 class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
   final HabitRepository _habitRepository = HabitRepository();
+  final HabitCompletionRepository _completionRepository =
+      HabitCompletionRepository();
+  late final HabitService _habitService;
   late Habit _habit;
   bool _isLoading = false;
+  bool _canCompleteHabit = false;
+  List<HabitCompletion> _recentCompletions = [];
 
   @override
   void initState() {
     super.initState();
     _habit = widget.habit;
+    _habitService = HabitService(
+      habitRepository: _habitRepository,
+      completionRepository: _completionRepository,
+    );
+    _loadScreenData();
   }
 
-  //##TODO _completeHabit function
-  /*
-  Future<void> _completeHabit(Habit habit) async {
-    final result = await habitService.completeHabit(habit);
+  Future<void> _loadScreenData() async {
+    await Future.wait([_refreshCompletableState(), _loadRecentCompletions()]);
+  }
 
-    if (result.success && result.updatedHabit != null) {
+  Future<void> _refreshCompletableState() async {
+    final canComplete = await _habitService.isHabitCompletableNow(_habit);
+
+    if (!mounted) return;
+
+    setState(() {
+      _canCompleteHabit = canComplete;
+    });
+  }
+
+  Future<void> _loadRecentCompletions() async {
+    if (_habit.id == null) return;
+
+    final completions = await _completionRepository.getCompletionsForHabit(
+      _habit.id!,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _recentCompletions = completions.take(5).toList();
+    });
+  }
+
+  Future<void> _completeHabit() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _habitService.completeHabit(_habit);
+
+      if (!mounted) return;
+
+      if (result.success && result.updatedHabit != null) {
+        setState(() {
+          _habit = result.updatedHabit!;
+        });
+
+        await _refreshCompletableState();
+        await _loadRecentCompletions();
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(result.message)));
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to complete habit: $e')));
+    } finally {
+      if (!mounted) return;
+
       setState(() {
-        _habit = result.updatedHabit!;
+        _isLoading = false;
       });
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result.message)),
-    );
   }
-  */
 
   Future<void> _editHabit() async {
     final result = await Navigator.push(
@@ -68,6 +129,9 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
         setState(() {
           _habit = refreshedHabit;
         });
+
+        await _refreshCompletableState();
+        await _loadRecentCompletions();
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -148,7 +212,10 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
                     children: [
                       _InfoRow(label: 'Category', value: _habit.category),
                       AppSpacing.gapMd,
-                      _InfoRow(label: 'Frequency', value: _habit.frequency.label),
+                      _InfoRow(
+                        label: 'Frequency',
+                        value: _habit.frequency.label,
+                      ),
                       AppSpacing.gapMd,
                       _InfoRow(
                         label: 'Current Streak',
@@ -162,6 +229,57 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
                     ],
                   ),
                 ),
+                if (_recentCompletions.isNotEmpty) ...[
+                  AppSpacing.gapLg,
+                  _InfoSection(
+                    title: 'Recent Completions',
+                    child: _recentCompletions.isEmpty
+                        ? Text(
+                            'You have no completions for this habit yet.',
+                            style: context.text.bodyMedium?.copyWith(
+                              color: context.colors.onSurfaceVariant,
+                            ),
+                          )
+                        : Column(
+                            children: _recentCompletions.map((completion) {
+                              final completedAt = completion.completedAt;
+                              final dateText =
+                                  '${completedAt.month}/${completedAt.day}/${completedAt.year}';
+                              final timeText =
+                                  '${completedAt.hour.toString().padLeft(2, '0')}:${completedAt.minute.toString().padLeft(2, '0')}';
+
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle_rounded,
+                                      color: context.appColors.success,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        dateText,
+                                        style: context.text.bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                    ),
+                                    Text(
+                                      timeText,
+                                      style: context.text.bodySmall?.copyWith(
+                                        color: context.colors.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                  ),
+                ],
                 if (_habit.imageUrl != null && _habit.imageUrl!.isNotEmpty) ...[
                   AppSpacing.gapLg,
                   _InfoSection(
@@ -174,11 +292,26 @@ class _HabitDetailsScreenState extends State<HabitDetailsScreen> {
                 ],
                 AppSpacing.gapXl,
                 ElevatedButton.icon(
+                  onPressed: (_isLoading || !_canCompleteHabit)
+                      ? null
+                      : _completeHabit,
+                  icon: Icon(
+                    _canCompleteHabit
+                        ? Icons.check_circle_rounded
+                        : Icons.task_alt_rounded,
+                  ),
+                  label: Text(
+                    _canCompleteHabit
+                        ? 'Complete habit'
+                        : 'Completed already, yay!',
+                  ),
+                ),
+                AppSpacing.gapMd,
+                ElevatedButton.icon(
                   onPressed: _editHabit,
                   icon: const Icon(Icons.edit_rounded),
                   label: const Text('Edit Habit'),
                 ),
-                //##TODO complete habit button likely here
               ],
             ),
     );
