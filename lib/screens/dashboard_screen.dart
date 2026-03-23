@@ -31,8 +31,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   late Future<int> _completedTodayFuture;
   late Future<int> _longestStreakFuture;
   String? _aiBuddyMessage;
-  List<HabitCompletion> _recentActivity = [];
-  Map<String, bool> _weeklyProgress = {};
+  final List<HabitCompletion> _recentActivity = [];
+  final Map<String, bool> _weeklyProgress = {};
 
   @override
   void initState(){
@@ -84,6 +84,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     //Sort by priority decending and take top 3 habits
     final sorted = habitScores.entries.toList()
     ..sort((a,b) => b.value.compareTo(a.value));
+
+    return sorted.take(3).map((e) => e.key).toList();
   }
   @override
   Widget build(BuildContext context) {
