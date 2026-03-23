@@ -162,20 +162,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: context.text.bodyMedium,
                   ),
                 ),*/
-                FutureBuilder<HabitAnalysis>(
-                  future: analyzer.analyze(habit),
-                  builder: (context, snapshot){
+                FutureBuilder<List<Habit>>(
+                  future: getTopHabits(
+                    widget.habitRepository,
+                    widget.habitService,
+                  ),
+                  builder: (context, snapshot) {
                     if (!snapshot.hasData) return const CircularProgressIndicator();
-                    final analysis = snapshot.data!;
-                    final message = aiService.generateMessage(habit, analysis);
-                    final goal = aiService.generateMicroGoal(habit, analysis);
-                    return Container(
-                      child: Column(
-                        children: [
-                          Text(message),
-                          Text("Goal: $goal"),
-                        ],
-                      ),
+
+                    final topHabits = snapshot.data!;
+
+                    if (topHabits.isEmpty) {
+                      return Text(
+                        "No habits to analyze yet.",
+                        style: context.text.bodyMedium,
+                      );
+                    }
+
+                    return Column(
+                      children: topHabits.map((habit) {
+                          return HabitAICard(
+                            habit: habit, 
+                            habitService: widget.habitService,
+                          );
+                      }).toList(),
                     );
                   },
                 ),
