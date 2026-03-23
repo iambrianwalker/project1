@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_mastery/models/habit_completion.dart';
+import 'package:habit_mastery/services/habit_analyzer.dart';
 import '../models/habit_model.dart';
 import '../repositories/habit_repository.dart';
 import '../services/habit_service.dart';
@@ -127,7 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 
                 //AI Buddy Message
                 _sectionTitle("AI Buddy"),
-                Container(
+                /*Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
@@ -137,6 +138,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     "",
                     style: context.text.bodyMedium,
                   ),
+                ),*/
+                FutureBuilder<HabitAnalysis>(
+                  future: analyzer.analyze(habit),
+                  builder: (context, snapshot){
+                    if (!snapshot.hasData) return const CircularProgressIndicator();
+                    final analysis = snapshot.data!;
+                    final message = aiService.generateMessage(habit, analysis);
+                    final goal = aiService.generateMicroGoal(habit, analysis);
+                    return Container(
+                      child: Column(
+                        children: [
+                          Text(message),
+                          Text("Goal: $goal"),
+                        ],
+                      ),
+                    );
+                  },
                 ),
                 AppSpacing.gapLg,
 

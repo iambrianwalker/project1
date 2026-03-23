@@ -38,3 +38,13 @@ class HabitAIService{
     return "Complete '${habit.habitName}' today."; 
   }
 }
+
+extension HabitAIPriority on HabitAIService{
+  int calculatePriority(HabitAnalysis analysis) {
+    if (analysis.daysSinceLast > 2) return 100; //struggling
+    if (!analysis.isActive) return 90; // inactive
+    if (analysis.streak >= 7) return 70; //strong streak
+    if (analysis.streak > 0) return 50; //early momentum
+    return 30; //new habit or no streak
+  }
+}
