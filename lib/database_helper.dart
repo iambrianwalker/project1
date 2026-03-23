@@ -30,12 +30,11 @@ class DatabaseHelper {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    await _createHabitsTable(db);
-    await _createHabitCompletionsTable(db);
+    await _createAllTables(db);
     await _createHabitCompletionIndexes(db);
   }
 
-  Future<void> _createHabitsTable(Database db) async {
+  Future<void> _createAllTables(Database db) async {
     await db.execute('''
       CREATE TABLE habits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,8 +51,6 @@ class DatabaseHelper {
         updated_at TEXT NOT NULL
       )
     ''');
-  }
-  Future<void> _createHabitCompletionsTable(Database db) async {
     await db.execute('''
       CREATE TABLE habit_completions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,7 +59,7 @@ class DatabaseHelper {
         created_at TEXT NOT NULL,
         FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
       )
-      ''');
+''');
   }
 
   Future<void> _createHabitCompletionIndexes(Database db) async {
