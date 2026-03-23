@@ -64,6 +64,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return habits.map((h) => h.currentStreak).reduce((a, b) => a > b ? a : b);
   }
 
+  Future<List<Habit>> getTopHabits(
+    HabitRepository habitRepository,
+    HabitService habitService,
+  ) async {
+    final allHabits = await habitRepository.getAllHabits();
+
+    final analyzer = HabitAnalyzer(habitService);
+    final aiService = HabitAIService();
+
+    final habitScores = <Habit, int>{};
+
+    for (final habit in allHabits) {
+      final analysis = await analyzer.analyze(habit);
+      final score = aiService.calculatePriority(analysis);
+      habitScores[habit] = score;
+    }
+
+    //Sort by priority decending and take top 3 habits
+    final sorted = habitScores.entries.toList()
+    ..sort((a,b) => b.value.compareTo(a.value));
+  }
   @override
   Widget build(BuildContext context) {
     return Padding(
