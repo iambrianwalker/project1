@@ -13,12 +13,15 @@ Users can create habits such as studying, exercising, drinking water, or sleepin
 
 ---
 
-📱 How to Use Habit Mastery League
+## 📱 How to Use Habit Mastery League
+
 🚀 Getting Started
+
 Open the app on your device.
 You will land on the Dashboard, which gives a quick overview of your habits and progress.
 Use the bottom navigation bar to move between different sections of the app.
-🏠 Dashboard
+
+## 🏠 Dashboard
 
 The Dashboard is your home screen.
 
@@ -27,11 +30,10 @@ View your active habits
 See your daily completion stats
 Check your longest streaks
 Read your AI-style motivation message
-Preview your recent activity
 
 👉 This screen helps you quickly understand how you're doing today.
 
-📋 Habits Screen
+## 📋 Habits Screen
 
 This is where you manage all your habits.
 
@@ -62,7 +64,7 @@ Save
 
 ⚠️ You can only mark a habit complete once per day.
 
-📊 Progress & Insights
+## 📊 Progress & Insights
 
 This section helps you understand your long-term performance.
 
@@ -74,7 +76,7 @@ Get AI-style insights based on your activity
 
 👉 Use this screen to identify patterns and improve consistency.
 
-⚙️ Settings
+## ⚙️ Settings
 
 Customize your app experience here.
 
@@ -82,17 +84,20 @@ Options include:
 Toggle Light/Dark Mode
 Set reminders/notifications
 Save preferences automatically
-💡 Tips for Success
+
+## 💡 Tips for Success
 Log your habits daily to build streaks
 Check the Dashboard regularly for motivation
 Use Progress insights to improve weak areas
 Start with small, achievable habits
-🔄 Navigation Summary
+
+## 🔄 Navigation Summary
 Dashboard → Overview of progress
 Habits → Create and manage habits
 Progress → View analytics and insights
 Settings → Customize your app
-🎯 Goal of the App
+
+## 🎯 Goal of the App
 
 Habit Mastery League is designed to help you:
 
