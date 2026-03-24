@@ -28,11 +28,6 @@ class DashboardScreen extends StatefulWidget{
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late Future<List<Habit>> _activeHabitsFuture;
-  late Future<int> _completedTodayFuture;
-  late Future<int> _longestStreakFuture;
-  String? _aiBuddyMessage;
-  final List<HabitCompletion> _recentActivity = [];
-  final Map<String, bool> _weeklyProgress = {};
 
   @override
   void initState(){
