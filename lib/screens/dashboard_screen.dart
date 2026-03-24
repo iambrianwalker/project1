@@ -84,87 +84,89 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: AppSpacing.screenPadding,
-      child: SingleChildScrollView(
-        child: FutureBuilder<List<Habit>>(
-          future: _activeHabitsFuture,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final habits = snapshot.data!;
+    return SafeArea(
+      child: Padding(
+        padding: AppSpacing.screenPadding,
+        child: SingleChildScrollView(
+          child: FutureBuilder<List<Habit>>(
+            future: _activeHabitsFuture,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final habits = snapshot.data!;
 
-            final completedToday = _completedToday(habits);
-            final longestStreak = _longestStreak(habits);
+              final completedToday = _completedToday(habits);
+              final longestStreak = _longestStreak(habits);
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //Greeting / Motivational Text
-                Text(
-                  "Good ${_greeting()}, let's crush some habits today!",
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                AppSpacing.gapLg,
-                //Active Habits Section
-                Text(
-                  "Active Habits",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                AppSpacing.gapSm,
-                if (habits.isEmpty)
-                  Text("No active habits yet.", style: context.text.bodyMedium),
-                ...habits.map((habit) => HabitAICard(
-                  habit: habit,
-                  habitService: widget.habitService,
-                )),
-
-                AppSpacing.gapLg,
-
-                //Stats Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _statCard("Completed Today", "$completedToday"),
-                    _statCard("Longest Streak", "$longestStreak"),
-                  ],
-                ),
-                AppSpacing.gapLg,
-                
-                //AI Buddy Message
-                _sectionTitle("AI Buddy"),
-                FutureBuilder<List<Habit>>(
-                  future: getTopHabits(
-                    widget.habitRepository,
-                    widget.habitService,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //Greeting / Motivational Text
+                  Text(
+                    "Good ${_greeting()}, let's crush some habits today!",
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const CircularProgressIndicator();
+                  AppSpacing.gapLg,
+                  //Active Habits Section
+                  Text(
+                    "Active Habits",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  AppSpacing.gapSm,
+                  if (habits.isEmpty)
+                    Text("No active habits yet.", style: context.text.bodyMedium),
+                  ...habits.map((habit) => HabitAICard(
+                    habit: habit,
+                    habitService: widget.habitService,
+                  )),
 
-                    final topHabits = snapshot.data!;
+                  AppSpacing.gapLg,
 
-                    if (topHabits.isEmpty) {
-                      return Text(
-                        "No habits to analyze yet.",
-                        style: context.text.bodyMedium,
+                  //Stats Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _statCard("Completed Today", "$completedToday"),
+                      _statCard("Longest Streak", "$longestStreak"),
+                    ],
+                  ),
+                  AppSpacing.gapLg,
+
+                  //AI Buddy Message
+                  _sectionTitle("AI Buddy"),
+                  FutureBuilder<List<Habit>>(
+                    future: getTopHabits(
+                      widget.habitRepository,
+                      widget.habitService,
+                    ),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return const CircularProgressIndicator();
+
+                      final topHabits = snapshot.data!;
+
+                      if (topHabits.isEmpty) {
+                        return Text(
+                          "No habits to analyze yet.",
+                          style: context.text.bodyMedium,
+                        );
+                      }
+
+                      return Column(
+                        children: topHabits.map((habit) {
+                            return HabitAICard(
+                              habit: habit,
+                              habitService: widget.habitService,
+                            );
+                        }).toList(),
                       );
-                    }
-
-                    return Column(
-                      children: topHabits.map((habit) {
-                          return HabitAICard(
-                            habit: habit, 
-                            habitService: widget.habitService,
-                          );
-                      }).toList(),
-                    );
-                  },
-                ),
-                AppSpacing.gapLg,
-              ],
-            );
-          },
+                    },
+                  ),
+                  AppSpacing.gapLg,
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
