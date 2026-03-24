@@ -4,6 +4,8 @@ import '../services/habit_service.dart';
 import '../services/habit_analyzer.dart';
 import '../services/habit_ai_service.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_theme_extensions.dart';
+import '../theme/app_corners.dart';
 
 class HabitAICard extends StatefulWidget {
   final Habit habit;
@@ -62,16 +64,28 @@ class _HabitAICardState extends State<HabitAICard> {
   @override
   Widget  build(BuildContext context) {
     if (isLoading) {
-      return const Card(
+      return Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppCorners.lg),
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         child: Padding(
           padding: AppSpacing.cardPadding,
-          child: Text("Loading..."),
+          child: Center(
+            child: Text(
+              "Loading...",
+              style: context.text.bodyMedium,
+            ),
+          ),
         ),
       );
     }
 
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppCorners.lg),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: AppSpacing.cardPadding,
         child: Column(
@@ -80,9 +94,9 @@ class _HabitAICardState extends State<HabitAICard> {
             //Habit Name
             Text(
               widget.habit.habitName,
-              style: const TextStyle(
-                fontSize: 18,
+              style: context.text.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: context.colors.onSurface,
               ),
             ),
 
@@ -91,19 +105,22 @@ class _HabitAICardState extends State<HabitAICard> {
             //AI Message
             Text(
               message ?? '',
-              style: const TextStyle(fontSize: 14),
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
 
             AppSpacing.gapSm,
 
             //Micro goal
-            Text(
-              "$goal",
-              style: const TextStyle(
-                fontSize: 13,
-                fontStyle: FontStyle.italic,
+            if (goal != null)
+              Text(
+                goal!,
+                style: context.text.bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
-            ),
 
             AppSpacing.gapMd,
 
@@ -111,8 +128,20 @@ class _HabitAICardState extends State<HabitAICard> {
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.appColors.brand,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppCorners.md),
+                  ),
+                ),
                 onPressed: _completeHabit,
-                child: const Text('Complete'),
+                child: Text(
+                  'Complete',
+                  style: context.text.bodyMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ],
