@@ -3,6 +3,7 @@ import '../models/habit_model.dart';
 import '../services/habit_service.dart';
 import '../services/habit_analyzer.dart';
 import '../services/habit_ai_service.dart';
+import '../theme/app_spacing.dart';
 
 class HabitAICard extends StatefulWidget {
   final Habit habit;
@@ -54,7 +55,7 @@ class _HabitAICardState extends State<HabitAICard> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result.messege)),
+      SnackBar(content: Text(result.message)),
     );
   }
 
@@ -63,7 +64,7 @@ class _HabitAICardState extends State<HabitAICard> {
     if (isLoading) {
       return const Card(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           child: Text("Loading..."),
         ),
       );
@@ -72,7 +73,7 @@ class _HabitAICardState extends State<HabitAICard> {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       child: Padding(
-        padding: const EdgetInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -85,7 +86,7 @@ class _HabitAICardState extends State<HabitAICard> {
               ),
             ),
 
-            const SizedBox(height: 8),
+            AppSpacing.gapSm,
 
             //AI Message
             Text(
@@ -93,7 +94,7 @@ class _HabitAICardState extends State<HabitAICard> {
               style: const TextStyle(fontSize: 14),
             ),
 
-            const SizedBox(height: 8),
+            AppSpacing.gapSm,
 
             //Micro goal
             Text(
@@ -104,7 +105,7 @@ class _HabitAICardState extends State<HabitAICard> {
               ),
             ),
 
-            const SizedBox(height: 12),
+            AppSpacing.gapMd,
 
             //Complete button
             Align(
