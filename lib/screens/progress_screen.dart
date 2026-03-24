@@ -396,6 +396,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   //individual rows for the summary metrics
+  //individual rows for the summary metrics
   Widget _buildSummaryRow({
     required IconData icon,
     required String value,
@@ -407,16 +408,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
       child: Row(
         children: [
           Icon(icon, size: 20, color: context.appColors.brand),
-          AppSpacing.gapSm,
-          SizedBox(
-            width: 28,
-            child: Text(
-              value,
-              style: context.text.titleLarge?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
           AppSpacing.gapSm,
           Expanded(
             child: Column(
@@ -436,6 +427,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                   ),
               ],
+            ),
+          ),
+          AppSpacing.gapMd,
+          Text(
+            value,
+            style: context.text.titleLarge?.copyWith(
+              fontWeight: FontWeight.w800,
             ),
           ),
         ],
