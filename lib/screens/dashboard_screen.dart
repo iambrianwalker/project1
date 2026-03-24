@@ -131,32 +131,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
                 AppSpacing.gapLg,
-
-                //Weekly Progress Placeholder
-                _sectionTitle("Weekly Progress"),
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Center(child: Text("Weekly Progress Chart Here?")),
-                ),
-                AppSpacing.gapLg,
                 
                 //AI Buddy Message
                 _sectionTitle("AI Buddy"),
-                /*Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    "",
-                    style: context.text.bodyMedium,
-                  ),
-                ),*/
                 FutureBuilder<List<Habit>>(
                   future: getTopHabits(
                     widget.habitRepository,
