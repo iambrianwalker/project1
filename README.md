@@ -13,6 +13,94 @@ Users can create habits such as studying, exercising, drinking water, or sleepin
 
 ---
 
+📱 How to Use Habit Mastery League
+🚀 Getting Started
+Open the app on your device.
+You will land on the Dashboard, which gives a quick overview of your habits and progress.
+Use the bottom navigation bar to move between different sections of the app.
+🏠 Dashboard
+
+The Dashboard is your home screen.
+
+What you can do:
+View your active habits
+See your daily completion stats
+Check your longest streaks
+Read your AI-style motivation message
+Preview your recent activity
+
+👉 This screen helps you quickly understand how you're doing today.
+
+📋 Habits Screen
+
+This is where you manage all your habits.
+
+To create a habit:
+Tap the Add Habit (+) button
+Enter:
+Habit name (e.g., “Workout”)
+Description (optional)
+Save the habit
+To edit or delete a habit:
+Tap on a habit → choose Edit or Delete
+Additional features:
+View all habits in a list
+See current streaks
+Use search/filter (if enabled)
+✅ Habit Details & Completion
+
+Tap on any habit to view more details.
+
+What you can do:
+View habit description and stats
+See your current streak
+View completion history
+To mark a habit complete:
+Tap “Mark Complete”
+(Optional) Add notes
+Save
+
+⚠️ You can only mark a habit complete once per day.
+
+📊 Progress & Insights
+
+This section helps you understand your long-term performance.
+
+Features:
+View charts and trends
+Track streak history
+See milestones and achievements
+Get AI-style insights based on your activity
+
+👉 Use this screen to identify patterns and improve consistency.
+
+⚙️ Settings
+
+Customize your app experience here.
+
+Options include:
+Toggle Light/Dark Mode
+Set reminders/notifications
+Save preferences automatically
+💡 Tips for Success
+Log your habits daily to build streaks
+Check the Dashboard regularly for motivation
+Use Progress insights to improve weak areas
+Start with small, achievable habits
+🔄 Navigation Summary
+Dashboard → Overview of progress
+Habits → Create and manage habits
+Progress → View analytics and insights
+Settings → Customize your app
+🎯 Goal of the App
+
+Habit Mastery League is designed to help you:
+
+Stay consistent
+Build positive routines
+Track measurable progress
+Stay motivated through feedback
+
 ## 🚀 Core Features
 
 * Create, edit, and delete habits
