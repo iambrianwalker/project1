@@ -116,11 +116,12 @@ Stay motivated through feedback
 
 ---
 
-## 🧠 Key Responsibilities
-
-* Designed and implemented **UI screens and widgets**
-* Built **navigation system** using bottom navigation bar
-* Developed **dashboard layout** for real-time progress visualization
+## 🔗 Packages Used
+* sqflite: ^2.0.3
+* sqflite_common_ffi: ^2.3.0
+* path: ^1.8.0
+* path_provider: ^2.0.1
+* chartify: ^1.0.0
 
 ---
 
